@@ -1,0 +1,92 @@
+/* ----- Google Fonts ----- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+/* ----- Reset y estilos generales ----- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+/* ----- Fondo y Estilo General ----- */
+body {
+    background-color: #1C1C1E;
+    color: #F5F5F7;
+}
+
+/* ----- Hero Section ----- */
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                url('https://source.unsplash.com/1600x900/?technology,health') center/cover no-repeat;
+    color: white;
+    padding: 120px 20px;
+    text-align: center;
+}
+
+.hero-section h2 {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.hero-section p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+/* ----- Botón de Acción ----- */
+.boton-principal {
+    display: inline-block;
+    background: #FF9500;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 1.2rem;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.boton-principal:hover {
+    background: #FF9F33;
+    transform: scale(1.05);
+}
+
+/* ----- Sección de Características ----- */
+.features-section {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.features-section h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 40px;
+}
+
+/* ----- Tarjetas de Características ----- */
+.feature {
+    background: #3A3A3C;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 4px 4px 10px #1C1C1E, -4px -4px 10px #505050;
+    transition: transform 0.3s;
+    text-align: center;
+}
+
+.feature:hover {
+    transform: translateY(-10px);
+}
+
+.feature i {
+    font-size: 3rem;
+    color: #FF9500;
+    margin-bottom: 15px;
+}
+
+/* ----- Footer ----- */
+footer {
+    background: #3A3A3C;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+}

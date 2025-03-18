@@ -1,0 +1,144 @@
+/* ----- Google Fonts ----- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+/* ----- Reset y estilos generales ----- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+/* ----- Fondo y Contenedor Principal ----- */
+body {
+    background-color: #1C1C1E;
+    color: #F5F5F7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* ----- Caja del Login/Registro ----- */
+.contenedor {
+    background: #2C2C2E;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+    padding: 30px;
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+    height: auto;
+    min-height: 450px;
+}
+
+/* ----- Título Principal ----- */
+.contenedor h1 {
+    color: #FF9500;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+/* ----- Botones para cambiar entre Login/Registro ----- */
+.cambio-formulario {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.cambio-formulario button {
+    flex: 1;
+    padding: 10px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #505050;
+    color: #F5F5F7;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.cambio-formulario button.activo {
+    border-bottom: 2px solid #FF9500;
+    color: #FF9500;
+    font-weight: bold;
+}
+
+/* ----- Formularios ----- */
+form {
+    display: none;
+}
+
+form.activo {
+    display: block;
+}
+
+.grupo-entrada {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.grupo-entrada label {
+    display: block;
+    color: #F5F5F7;
+    font-weight: bold;
+}
+
+.grupo-entrada input, .grupo-entrada select {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #1C1C1E;
+    color: #F5F5F7;
+    box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.2);
+    outline: none;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.grupo-entrada input:focus, .grupo-entrada select:focus {
+    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.3);
+    background: #2C2C2E;
+}
+
+/* ----- Botón de Acción ----- */
+.boton-principal {
+    width: 100%;
+    padding: 12px;
+    background: #FF9500;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.boton-principal:hover {
+    background: #FF9F33;
+    transform: scale(1.05);
+}
+
+.volver-inicio {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #FF9500;
+    font-size: 1rem;
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.volver-inicio:hover {
+    color: #FF9F33;
+    text-decoration: underline;
+    transform: scale(1.05);
+}
+
+@media (max-width: 480px) {
+    .contenedor {
+        width: 90%;
+        padding: 20px;
+        min-height: 450px;
+    }
+}
