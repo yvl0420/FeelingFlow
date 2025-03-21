@@ -1,0 +1,303 @@
+/* Reset de márgenes y padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #F5F5F5;
+    margin: 0;
+}
+
+/* Navbar */
+nav {
+    background-color: #ffffff;
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-size: 24px;
+    color: #4A90E2;
+    text-decoration: none;
+}
+
+.navbar-links {
+    float: right;
+}
+
+.navbar-links a {
+    margin: 0 10px;
+    color: #555;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.navbar-links a:hover,
+.navbar-links a.active {
+    color: #4A90E2;
+}
+
+/* Contenedor Principal */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 20px auto;
+}
+
+/* Títulos */
+h2 {
+    font-size: 32px;
+    color: #333;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* Filtros de Búsqueda */
+form {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.form-group {
+    width: 28%; /* Ajusté el tamaño del contenedor de especialidad */
+}
+
+.form-group label {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 8px;
+    display: block;
+}
+
+select, input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+}
+
+/* Botón de Búsqueda */
+button[type="submit"] {
+    background-color: #4A90E2;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 95%; /* Hacer el botón más ancho */
+    max-width: 200px;
+    align-self: center;
+    display: block; /* Asegurar que se tome toda la línea */
+}
+
+button[type="submit"]:hover {
+    background-color: #397bb1;
+}
+
+/* Estilos para el botón de Cerrar Sesión */
+#cerrarSesion {
+    background-color: #FF4C4C; /* Rojo para resaltar */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    margin-left: 20px;
+}
+
+#cerrarSesion:hover {
+    background-color: #D43F3F; /* Rojo oscuro al pasar el mouse */
+    transform: scale(1.05); /* Pequeña animación de aumento */
+}
+
+/* Tabla de Médicos */
+.table-custom {
+    width: 100%;
+    margin-top: 30px;
+    border-collapse: collapse;
+    background-color: #fff;
+}
+
+.table-custom thead {
+    background-color: #6c757d;
+    color: white;
+}
+
+.table-custom th, .table-custom td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.table-custom tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.table-custom tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.table-custom td a {
+    color: #4A90E2;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.table-custom td a:hover {
+    color: #397bb1;
+}
+
+/* Paginación */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.page-item {
+    margin: 0 5px;
+}
+
+.page-link {
+    padding: 10px 20px;
+    background-color: #f8f9fa;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.page-link:hover {
+    background-color: #4A90E2;
+    color: white;
+}
+
+/* Footer */
+.footer {
+    background-color: #f8f8f8;
+    padding: 20px;
+    text-align: center;
+    color: #777;
+}
+
+/* Media Queries para adaptarse a diferentes tamaños de pantalla */
+
+/* Pantallas pequeñas (≤768px) */
+@media (max-width: 768px) {
+    /* Navbar */
+    nav {
+        text-align: center;
+        padding: 15px;
+    }
+
+    .navbar-brand {
+        display: block;
+        font-size: 20px;
+    }
+
+    .navbar-links {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .navbar-links a {
+        font-size: 14px;
+        display: block;
+        padding: 5px 0;
+    }
+
+    /* Contenedor Principal */
+    .container {
+        width: 95%;
+    }
+
+    /* Títulos */
+    h2 {
+        font-size: 28px;
+    }
+
+    /* Formulario de Filtros */
+    form {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .form-group {
+        width: 100%;
+    }
+
+    button[type="submit"] {
+        width: 100%;
+        max-width: unset;
+    }
+
+    /* Tabla de Médicos */
+    .table-custom {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    /* Paginación */
+    .pagination {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    /* Footer */
+    .footer {
+        padding: 15px;
+    }
+
+    .footer p {
+        font-size: 14px;
+    }
+}
+
+/* Para tablets y pantallas medianas (1024px) */
+@media (max-width: 1024px) {
+    /* Navbar */
+    .navbar-links {
+        float: none;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .navbar-links a {
+        font-size: 14px;
+    }
+
+    /* Formulario de Filtros */
+    .form-group {
+        width: 45%;
+    }
+
+    /* Tabla de Médicos */
+    .table-custom th, .table-custom td {
+        padding: 12px;
+    }
+}

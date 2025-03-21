@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FeelingFlow - Gestiona tu Salud</title>
-    
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
     <!-- Iconos FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -17,76 +14,56 @@
 
 <body>
     <!-- Barra de navegación -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar">
         <div class="container">
             <a class="navbar-brand" href="/">FeelingFlow</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Nuestros Servicios</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login">Inicia Sesión</a>
-                    </li>
-                </ul>
+            <div class="navbar-links">
+                <a class="nav-link active" href="/">Inicio</a>
+                <a class="nav-link" href="#">Nuestros Servicios</a>
+                <a class="nav-link" href="/login">Inicia Sesión</a>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero-section text-center">
+    <section class="hero-section">
         <div class="container">
-            <h2>Gestiona tu salud de manera fácil y eficiente</h2>
-            <p>Reserva citas, accede a tu historial clínico y recibe notificaciones importantes.</p>
-            <a href="/login" class="btn btn-primary">Inicia Sesión o Regístrate ahora</a>
+            <h1 class="hero-title">Gestiona tu salud de manera fácil y eficiente</h1>
+            <p class="hero-description">Reserva citas, accede a tu historial clínico y recibe notificaciones importantes.</p>
+            <a href="/login" class="hero-btn">COMENZAR AHORA</a>
         </div>
     </section>
 
     <!-- Features Section -->
     <section class="features-section">
         <div class="container">
-            <h2 class="text-center">Nuestros Servicios</h2>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="feature">
-                        <i class="fa fa-calendar-alt"></i>
-                        <h3>Reserva de Citas</h3>
-                        <p>Reserva citas médicas online con tus especialistas de forma rápida y sencilla.</p>
-                    </div>
+            <h2 class="features-title">Nuestros Servicios</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <i class="fa fa-calendar-alt feature-icon"></i>
+                    <h5 class="feature-title">Reserva de Citas</h5>
+                    <p class="feature-description">Reserva citas médicas online con tus especialistas de forma rápida y sencilla.</p>
                 </div>
-                <div class="col-md-4">
-                    <div class="feature">
-                        <i class="fa fa-file-medical"></i>
-                        <h3>Historial Clínico</h3>
-                        <p>Accede a tu historial clínico de forma segura y consulta tus informes y resultados.</p>
-                    </div>
+                <div class="feature-card">
+                    <i class="fa fa-file-medical feature-icon"></i>
+                    <h5 class="feature-title">Historial Clínico</h5>
+                    <p class="feature-description">Accede a tu historial clínico de forma segura y consulta tus informes y resultados.</p>
                 </div>
-                <div class="col-md-4">
-                    <div class="feature">
-                        <i class="fa fa-bell"></i>
-                        <h3>Notificaciones</h3>
-                        <p>Recibe notificaciones sobre tus próximas citas y recordatorios de medicamentos.</p>
-                    </div>
+                <div class="feature-card">
+                    <i class="fa fa-bell feature-icon"></i>
+                    <h5 class="feature-title">Notificaciones</h5>
+                    <p class="feature-description">Recibe notificaciones sobre tus próximas citas y recordatorios de medicamentos.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="text-center">
+    <footer class="footer">
         <div class="container">
             <p>&copy; 2025 FeelingFlow. Todos los derechos reservados.</p>
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

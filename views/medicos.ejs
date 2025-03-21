@@ -5,58 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FeelingFlow - Buscar Médicos</title>
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <!-- Iconos FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <!-- Estilos personalizados -->
-    <link rel="stylesheet" href="/css/panel.css">
-    <style>
-        .table-custom {
-            background-color: #f8f9fa;
-        }
-        .table-custom thead {
-            background-color: #6c757d;
-            color: white;
-        }
-        .table-custom tbody tr:nth-child(even) {
-            background-color: #e9ecef;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/medicos.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav>
         <div class="container">
             <a class="navbar-brand" href="/">FeelingFlow</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Menú de navegación">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/" aria-label="Ir a Inicio">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/panel" aria-current="page">Panel</a>
-                    </li>
-                    <li class="nav-item">
-                        <button id="cerrarSesion" class="btn btn-link nav-link" aria-label="Cerrar sesión">Cerrar Sesión</button>
-                    </li>
-                </ul>
+            <div class="navbar-links">
+                <a href="/">Inicio</a>
+                <a href="/panel">Panel</a>
+                <a href="/mis-citas">Mis Citas</a>
+                <button id="cerrarSesion" class="btn btn-link">Cerrar Sesión</button>
             </div>
         </div>
     </nav>
 
     <!-- Contenido Principal -->
-    <div class="container mt-4">
-        <h2 class="text-center mb-4">Buscar Médicos</h2>
+    <div class="container">
+        <h2>Buscar Médicos</h2>
 
         <!-- Filtros de Búsqueda -->
-        <form action="/medicos" method="GET" class="row g-3 mb-4">
-            <div class="col-md-4">
+        <form action="/medicos" method="GET">
+            <div class="form-group">
                 <label class="form-label">Especialidad</label>
-                <select name="especialidad" class="form-select" aria-label="Filtrar por especialidad">
+                <select name="especialidad">
                     <option value="">Todas</option>
                     <option value="Cardiología" <%= especialidad === 'Cardiología' ? 'selected' : '' %>>Cardiología</option>
                     <option value="Dermatología" <%= especialidad === 'Dermatología' ? 'selected' : '' %>>Dermatología</option>
@@ -65,36 +40,26 @@
                 </select>
             </div>
 
-            <div class="col-md-4">
+            <div class="form-group">
                 <label class="form-label">Ubicación</label>
-                <input type="text" name="ubicacion" class="form-control" placeholder="Ciudad o dirección" value="<%= ubicacion || '' %>" aria-label="Filtrar por ubicación">
+                <input type="text" name="ubicacion" placeholder="Ciudad o dirección" value="<%= ubicacion || '' %>">
             </div>
 
-            <div class="col-md-4">
-                <label class="form-label">Disponibilidad</label>
-                <select name="disponibilidad" class="form-select" aria-label="Filtrar por disponibilidad">
-                    <option value="">Cualquiera</option>
-                    <option value="mañana" <%= disponibilidad === 'mañana' ? 'selected' : '' %>>Mañana</option>
-                    <option value="tarde" <%= disponibilidad === 'tarde' ? 'selected' : '' %>>Tarde</option>
-                    <option value="disponible" <%= disponibilidad === 'disponible' ? 'selected' : '' %>>Todo el día</option>
-                    <option value="no disponible" <%= disponibilidad === 'no disponible' ? 'selected' : '' %>>No Disponible</option>
-                </select>
-            </div>
-
-            <div class="col-12 text-center">
-                <button type="submit" class="btn btn-primary" aria-label="Buscar médicos">
+            <div class="form-group">
+                <button type="submit" class="btn">
                     <i class="fa fa-search"></i> Buscar
                 </button>
             </div>
         </form>
 
-        <table class="table table-striped table-custom">
+        <!-- Tabla de Médicos -->
+        <table class="table-custom">
             <thead>
                 <tr>
-                    <th scope="col">Especialidad</th>
-                    <th scope="col">Ubicación</th>
-                    <th scope="col">Calificación</th>
-                    <th scope="col">Acciones</th>
+                    <th>Especialidad</th>
+                    <th>Ubicación</th>
+                    <th>Calificación</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -105,8 +70,7 @@
                             <td><%= medico.ubicacion %></td>
                             <td><%= medico.calificacion %>/5 ⭐</td>
                             <td>
-                                <a href="/horarios/<%= medico.id %>" class="btn btn-info btn-sm" 
-                                   aria-label="Ver horarios disponibles de <%= medico.especialidad %>">
+                                <a href="/horarios/<%= medico.id %>">
                                     <i class="fa fa-clock"></i> Ver Horarios
                                 </a>
                             </td>
@@ -122,11 +86,11 @@
 
         <!-- Paginación -->
         <% if (totalPaginas > 1) { %>
-            <nav aria-label="Paginación">
-                <ul class="pagination justify-content-center">
-                    <% for(let i = 1; i <= totalPaginas; i++) { %>
+            <nav>
+                <ul class="pagination">
+                    <% for (let i = 1; i <= totalPaginas; i++) { %>
                         <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                            <a class="page-link" href="?page=<%= i %>&especialidad=<%= especialidad || '' %>&ubicacion=<%= ubicacion || '' %>&disponibilidad=<%= disponibilidad || '' %>">
+                            <a class="page-link" href="?page=<%= i %>&especialidad=<%= especialidad || '' %>&ubicacion=<%= ubicacion || '' %>">
                                 <%= i %>
                             </a>
                         </li>
@@ -136,9 +100,6 @@
         <% } %>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
     <!-- Logout con Fetch -->
     <script>
         document.getElementById("cerrarSesion").addEventListener("click", () => {
@@ -146,6 +107,5 @@
                 .then(() => window.location.href = "/");
         });
     </script>
-
 </body>
 </html>
