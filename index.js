@@ -1,11 +1,5 @@
 import express from 'express';
 import db from "./config/db.js";
-import Usuario from "./models/usuarios.js";
-import Medico from "./models/medicos.js";
-import Cita from "./models/citas.js";
-import Historial from "./models/historial.js";
-import Receta from "./models/recetas.js";
-import Notificacion from "./models/notificaciones.js";
 import router from "./router/index.js";
 import "./models/asociaciones.js";
 import session from "express-session";

@@ -1,18 +1,15 @@
-/* Reset de márgenes y padding */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Body */
 body {
     font-family: 'Arial', sans-serif;
     background-color: #F5F5F5;
     margin: 0;
 }
 
-/* Navbar */
 nav {
     background-color: #ffffff;
     padding: 10px 20px;
@@ -21,7 +18,7 @@ nav {
 
 .navbar-brand {
     font-size: 24px;
-    color: #4A90E2;
+    color: #0056b3;
     text-decoration: none;
 }
 
@@ -38,10 +35,9 @@ nav {
 
 .navbar-links a:hover,
 .navbar-links a.active {
-    color: #4A90E2;
+    color: #0056b3;
 }
 
-/* Contenedor Principal */
 .container {
     width: 90%;
     max-width: 1200px;
@@ -49,7 +45,7 @@ nav {
 }
 
 #cerrarSesion {
-    background-color: #FF4C4C; /* Rojo para resaltar */
+    background-color: #FF4C4C;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -61,18 +57,16 @@ nav {
 }
 
 #cerrarSesion:hover {
-    background-color: #D43F3F; /* Rojo oscuro al pasar el mouse */
-    transform: scale(1.05); /* Pequeña animación de aumento */
+    background-color: #D43F3F;
+    transform: scale(1.05);
 }
 
-/* Contenedor Principal */
 .container {
     width: 90%;
     max-width: 1200px;
     margin: 20px auto;
 }
 
-/* Títulos */
 h2 {
     font-size: 32px;
     color: #333;
@@ -80,7 +74,6 @@ h2 {
     text-align: center;
 }
 
-/* Tarjeta con Información del Médico */
 .card {
     background-color: white;
     border-radius: 8px;
@@ -104,7 +97,6 @@ h2 {
     margin-top: 5px;
 }
 
-/* Calendario */
 #calendar {
     max-width: 900px;
     margin: 0 auto;
@@ -113,9 +105,8 @@ h2 {
     padding: 10px;
 }
 
-/* Botones */
 .btn-primary {
-    background-color: #4A90E2;
+    background-color: #0056b3;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -143,15 +134,14 @@ h2 {
     background-color: #d9d9d9;
 }
 
-/* Footer */
 .footer {
-    background-color: #f8f8f8;
+    background-color: #0056b3;
+    color: white;
     padding: 20px;
     text-align: center;
-    color: #777;
 }
+
 @media (max-width: 1024px) {
-    /* Navbar */
     .navbar-links {
         float: none;
         text-align: center;
@@ -165,7 +155,6 @@ h2 {
         font-size: 14px;
     }
 
-    /* Tarjeta de Información del Médico */
     .card {
         padding: 15px;
     }
@@ -178,16 +167,13 @@ h2 {
         font-size: 15px;
     }
 
-    /* Calendario */
     #calendar {
         max-width: 100%;
         padding: 10px;
     }
 }
 
-/* Para móviles y pantallas pequeñas (≤768px) */
 @media (max-width: 768px) {
-    /* Navbar */
     nav {
         text-align: center;
         padding: 15px;
@@ -210,17 +196,14 @@ h2 {
         padding: 5px 0;
     }
 
-    /* Contenedor Principal */
     .container {
         width: 95%;
     }
 
-    /* Títulos */
     h2 {
         font-size: 28px;
     }
 
-    /* Tarjeta de Información del Médico */
     .card {
         padding: 10px;
     }
@@ -233,19 +216,16 @@ h2 {
         font-size: 14px;
     }
 
-    /* Botones */
     .btn-primary,
     .btn-secondary {
         font-size: 14px;
         padding: 8px 15px;
     }
 
-    /* Calendario */
     #calendar {
         padding: 5px;
     }
 
-    /* Footer */
     .footer {
         padding: 15px;
     }

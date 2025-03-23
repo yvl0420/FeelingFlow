@@ -1,54 +1,77 @@
-/* Reset de márgenes y padding */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Body */
 body {
     font-family: 'Arial', sans-serif;
     background-color: #F5F5F5;
     margin: 0;
 }
 
-/* Navbar */
 nav {
     background-color: #ffffff;
-    padding: 10px 20px;
+    padding: 15px 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .navbar-brand {
     font-size: 24px;
-    color: #4A90E2;
+    color: #0056b3;
     text-decoration: none;
+    font-weight: bold;
+}
+
+.navbar-brand:hover {
+    color: #333;
 }
 
 .navbar-links {
     float: right;
+    gap: 20px;
 }
 
-.navbar-links a {
-    margin: 0 10px;
-    color: #555;
+.nav-link {
+    color: #888;
     text-decoration: none;
     font-size: 16px;
+    transition: color 0.3s ease;
 }
 
-.navbar-links a:hover,
-.navbar-links a.active {
-    color: #4A90E2;
+.nav-link:hover {
+    color: #0056b3;
 }
 
-/* Contenedor Principal */
+.nav-link.active {
+    color: #0056b3;
+}
+
+#cerrarSesion {
+    background-color: #FF4C4C;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 20px;
+}
+
+#cerrarSesion:hover {
+    background-color: #D43F3F;
+    transform: scale(1.05);
+}
+
 .container {
     width: 90%;
     max-width: 1200px;
     margin: 20px auto;
 }
 
-/* Títulos */
 h2 {
     font-size: 32px;
     color: #333;
@@ -56,7 +79,6 @@ h2 {
     text-align: center;
 }
 
-/* Filtros de Búsqueda */
 form {
     background-color: #fff;
     padding: 30px;
@@ -69,7 +91,7 @@ form {
 }
 
 .form-group {
-    width: 28%; /* Ajusté el tamaño del contenedor de especialidad */
+    width: 28%;
 }
 
 .form-group label {
@@ -88,45 +110,24 @@ select, input[type="text"] {
     color: #333;
 }
 
-/* Botón de Búsqueda */
 button[type="submit"] {
-    background-color: #4A90E2;
+    background-color: #0056b3;
     color: white;
     padding: 15px 30px;
-    border: none;
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
-    width: 95%; /* Hacer el botón más ancho */
+    width: 90%;
     max-width: 200px;
-    align-self: center;
-    display: block; /* Asegurar que se tome toda la línea */
+    display: block;
+    margin-top: 15px;
 }
 
 button[type="submit"]:hover {
     background-color: #397bb1;
 }
 
-/* Estilos para el botón de Cerrar Sesión */
-#cerrarSesion {
-    background-color: #FF4C4C; /* Rojo para resaltar */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s;
-    margin-left: 20px;
-}
-
-#cerrarSesion:hover {
-    background-color: #D43F3F; /* Rojo oscuro al pasar el mouse */
-    transform: scale(1.05); /* Pequeña animación de aumento */
-}
-
-/* Tabla de Médicos */
 .table-custom {
     width: 100%;
     margin-top: 30px;
@@ -154,7 +155,7 @@ button[type="submit"]:hover {
 }
 
 .table-custom td a {
-    color: #4A90E2;
+    color: #0056b3;
     text-decoration: none;
     font-size: 16px;
 }
@@ -163,7 +164,6 @@ button[type="submit"]:hover {
     color: #397bb1;
 }
 
-/* Paginación */
 .pagination {
     display: flex;
     justify-content: center;
@@ -188,23 +188,18 @@ button[type="submit"]:hover {
 }
 
 .page-link:hover {
-    background-color: #4A90E2;
+    background-color: #0056b3;
     color: white;
 }
 
-/* Footer */
 .footer {
-    background-color: #f8f8f8;
+    background-color: #0056b3;
+    color: white;
     padding: 20px;
     text-align: center;
-    color: #777;
 }
 
-/* Media Queries para adaptarse a diferentes tamaños de pantalla */
-
-/* Pantallas pequeñas (≤768px) */
 @media (max-width: 768px) {
-    /* Navbar */
     nav {
         text-align: center;
         padding: 15px;
@@ -227,17 +222,14 @@ button[type="submit"]:hover {
         padding: 5px 0;
     }
 
-    /* Contenedor Principal */
     .container {
         width: 95%;
     }
 
-    /* Títulos */
     h2 {
         font-size: 28px;
     }
 
-    /* Formulario de Filtros */
     form {
         flex-direction: column;
         align-items: center;
@@ -252,20 +244,17 @@ button[type="submit"]:hover {
         max-width: unset;
     }
 
-    /* Tabla de Médicos */
     .table-custom {
         display: block;
         overflow-x: auto;
         white-space: nowrap;
     }
 
-    /* Paginación */
     .pagination {
         flex-wrap: wrap;
         gap: 5px;
     }
 
-    /* Footer */
     .footer {
         padding: 15px;
     }
@@ -275,9 +264,7 @@ button[type="submit"]:hover {
     }
 }
 
-/* Para tablets y pantallas medianas (1024px) */
 @media (max-width: 1024px) {
-    /* Navbar */
     .navbar-links {
         float: none;
         text-align: center;
@@ -291,12 +278,10 @@ button[type="submit"]:hover {
         font-size: 14px;
     }
 
-    /* Formulario de Filtros */
     .form-group {
         width: 45%;
     }
 
-    /* Tabla de Médicos */
     .table-custom th, .table-custom td {
         padding: 12px;
     }

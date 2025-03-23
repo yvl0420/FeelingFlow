@@ -4,63 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FeelingFlow - Panel de Usuario</title>
-
-    <!-- Iconos FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-
-    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/panel.css">
 </head>
 
 <body>
-    <!-- Barra de navegación -->
-    <nav class="navbar">
+    <nav class="navbar" role="navigation" aria-label="Menú de navegación">
         <div class="container">
-            <a class="navbar-brand" href="/">FeelingFlow</a>
-            <div class="navbar-links">
-                <a href="/">Inicio</a>
-                <a href="/panel" class="active">Panel</a>
-                <a href="/mis-citas">Mis Citas</a>
-                <a href="#" id="cerrarSesion" class="text-danger">Cerrar Sesión</a>
+            <a class="navbar-brand" href="/" aria-label="Ir a la página de inicio">FeelingFlow</a>
+            <div class="navbar-links" role="menu">
+                <a href="/" class="nav-link" role="menuitem" aria-label="Ir a la página de inicio">Inicio</a>
+                <a href="/panel" class="nav-link active" role="menuitem" aria-label="Ir al panel de usuario">Panel</a>
+                <a href="/mis-citas" class="nav-link" role="menuitem" aria-label="Ir a las citas del usuario">Mis Citas</a>
+                <a href="#" id="cerrarSesion" role="button" aria-label="Cerrar sesión del usuario">Cerrar Sesión</a>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero-section">
+    <section class="hero-section" aria-labelledby="bienvenido">
         <div class="container">
-            <h2>Bienvenido,<%= usuario.nombre %>!</h2>
+            <h2 id="bienvenido">Bienvenido,<%= usuario.nombre %>!</h2>
             <p>Accede a todas las funcionalidades de tu cuenta de forma rápida y fácil.</p>
         </div>
     </section>
 
-    <!-- Panel de Control -->
-    <section class="panel-section">
+    <section class="panel-section" aria-labelledby="panelOpciones">
         <div class="container">
-            <div class="panel-options">
-                <div class="panel-option">
-                    <i class="fa fa-calendar-alt"></i>
-                    <h3>Reserva de Citas</h3>
+            <div class="panel-options" role="region" aria-labelledby="panelOpciones">
+                <div class="panel-option" role="contentinfo" aria-labelledby="reservaCitas">
+                    <i class="fa fa-calendar-alt" aria-hidden="true"></i>
+                    <h3 id="reservaCitas">Reserva de Citas</h3>
                     <p>Encuentra médicos y reserva citas de forma rápida y sencilla.</p>
-                    <a href="/medicos" class="btn">Buscar Médicos</a>
+                    <a href="/medicos" class="btn" aria-label="Buscar médicos">Buscar Médicos</a>
                 </div>
-                <div class="panel-option">
-                    <i class="fa fa-file-medical"></i>
-                    <h3>Historial Clínico</h3>
+                <div class="panel-option" role="contentinfo" aria-labelledby="historialClinico">
+                    <i class="fa fa-file-medical" aria-hidden="true"></i>
+                    <h3 id="historialClinico">Historial Clínico</h3>
                     <p>Accede a tu historial clínico de forma segura y consulta tus informes y resultados.</p>
-                    <a href="/historial" class="btn">Ver Historial</a>
-                </div>
-                <div class="panel-option">
-                    <i class="fa fa-bell"></i>
-                    <h3>Notificaciones</h3>
-                    <p>Recibe notificaciones sobre tus próximas citas y recordatorios de medicamentos.</p>
+                    <a href="/historial" class="btn" aria-label="Ver historial clínico">Ver Historial</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer>
+    <footer class="footer" aria-label="Pie de página">
         <div class="container">
             <p>&copy; 2025 FeelingFlow. Todos los derechos reservados.</p>
         </div>
@@ -72,6 +60,10 @@
                 .then(() => window.location.href = "/");
         });
     </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </body>
 </html>

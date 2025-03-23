@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Historial Médico</title>
     <link rel="stylesheet" href="/css/historial.css">
+    <link rel="stylesheet" href="/css/inicio.css">
 </head>
 <body>
-    <nav>
-        <a class="navbar-brand" href="#">FeelingFlow</a>
-        <div class="navbar-links">
-            <a href="/panel">Panel</a>
-            <a href="/medicos">Buscar Médicos</a>
-            <a href="/mis-citas">Ver Mis Citas</a>
-            <a href="/historial" class="active">Historial Médico</a>
-            <form action="/logout" method="post">
-                <button type="submit" id="cerrarSesion">Cerrar Sesión</button>
-            </form>
+    <nav class="navbar" role="navigation" aria-label="Navegación principal">
+        <div class="container">
+            <a class="navbar-brand" href="/" aria-label="Ir a la página de inicio">FeelingFlow</a>
+            <div class="navbar-links" role="menu">
+                <a href="/" class="nav-link" role="menuitem" aria-current="page">Inicio</a>
+                <a href="/panel" class="nav-link active" role="menuitem">Panel</a>
+                <a href="/mis-citas" class="nav-link" role="menuitem">Mis Citas</a>
+                <a href="#" id="cerrarSesion" role="button" aria-label="Cerrar sesión">Cerrar Sesión</a>
+            </div>
         </div>
     </nav>
 
@@ -24,9 +24,9 @@
         <h2>Historial Médico</h2>
 
         <% if (historial.length > 0) { %>
-            <ul class="historial-lista">
+            <ul class="historial-lista" role="list">
                 <% historial.forEach((entry) => { %>
-                    <li class="historial-item">
+                    <li class="historial-item" role="listitem">
                         <p><strong>Fecha:</strong> <%= new Date(entry.fecha_registro).toLocaleDateString() %></p>
                         <p><strong>Diagnóstico:</strong> <%= entry.diagnostico %></p>
                         <p><strong>Tratamiento:</strong> <%= entry.tratamiento %></p>
@@ -34,41 +34,46 @@
                 <% }); %>
             </ul>
 
-            <button class="btn-primary" onclick="descargarPDF()">Generar PDF</button>
+            <button class="btn-primary" onclick="descargarPDF()" aria-label="Generar historial en formato PDF">Generar PDF</button>
         <% } else { %>
             <p class="mensaje-vacio">No tienes historial médico registrado.</p>
         <% } %>
     </div>
 
+    <footer class="footer mt-auto py-3 bg-light" role="contentinfo">
+        <div class="container">
+            <span class="text-muted">© 2025 FeelingFlow. Todos los derechos reservados.</span>
+        </div>
+    </footer>
+
     <script>
     function descargarPDF() {
-    fetch("/historial/generar-pdf")
-        .then(response => {
-            if (response.status === 404) {
-                alert("No hay historial disponible para descargar.");
-                return;
-            }
-            if (response.ok) {
-                return response.blob();
-            }
-            throw new Error("Error al generar el PDF");
-        })
-        .then(blob => {
-            if (!blob) return;
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "Historial_Medico.pdf";
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-        })
-        .catch(error => {
-            console.error("Error al descargar el PDF:", error);
-            alert("Hubo un problema al generar el PDF.");
-        });
-}
-
+        fetch("/historial/generar-pdf")
+            .then(response => {
+                if (response.status === 404) {
+                    alert("No hay historial disponible para descargar.");
+                    return;
+                }
+                if (response.ok) {
+                    return response.blob();
+                }
+                throw new Error("Error al generar el PDF");
+            })
+            .then(blob => {
+                if (!blob) return;
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "Historial_Medico.pdf";
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                console.error("Error al descargar el PDF:", error);
+                alert("Hubo un problema al generar el PDF.");
+            });
+    }
     </script>
 </body>
 </html>

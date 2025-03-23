@@ -1,40 +1,71 @@
-/* Estilos generales */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Arial', sans-serif;
     background-color: #F5F5F5;
-    margin: 0;
+    color: #333;
 }
 
-/* Navbar */
 nav {
     background-color: #ffffff;
-    padding: 10px 20px;
+    padding: 15px 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .navbar-brand {
     font-size: 24px;
-    color: #4A90E2;
+    color: #0056b3;
     text-decoration: none;
+    font-weight: bold;
+}
+
+.navbar-brand:hover {
+    color: #333;
 }
 
 .navbar-links {
     float: right;
+    gap: 20px;
 }
 
-.navbar-links a {
-    margin: 0 10px;
-    color: #555;
+.nav-link {
+    color: #888;
     text-decoration: none;
     font-size: 16px;
+    transition: color 0.3s ease;
 }
 
-.navbar-links a:hover,
-.navbar-links a.active {
-    color: #4A90E2;
+.nav-link:hover {
+    color: #0056b3;
 }
 
-/* Contenedor */
+.nav-link.active {
+    color: #0056b3;
+}
+
+#cerrarSesion {
+    background-color: #FF4C4C;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 20px;
+}
+
+#cerrarSesion:hover {
+    background-color: #D43F3F;
+    transform: scale(1.05);
+}
+
 .container {
     width: 90%;
     max-width: 1200px;
@@ -42,36 +73,40 @@ nav {
 }
 
 h2 {
-    text-align: center;
+    font-size: 32px;
     color: #333;
-    font-size: 28px;
+    margin-bottom: 30px;
+    text-align: center;
 }
 
-/* Historial médico */
 .historial-lista {
-    list-style: none;
+    list-style-type: none;
     padding: 0;
 }
 
 .historial-item {
     background-color: white;
-    padding: 15px;
-    margin: 10px 0;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+    min-height: 120px;
 }
 
-.mensaje-vacio {
-    text-align: center;
-    color: #777;
-    font-size: 18px;
+.historial-item p {
+    font-size: 16px;
+    color: #666;
+    margin-top: 5px;
 }
 
-/* Botón */
+.historial-item strong {
+    font-weight: bold;
+    color: #333;
+}
+
+/* Botones */
 .btn-primary {
-    display: block;
-    margin: 20px auto;
-    background-color: #4A90E2;
+    background-color: #0056b3;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -79,8 +114,96 @@ h2 {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    display: block;
+    margin: 20px auto;
 }
 
 .btn-primary:hover {
     background-color: #397bb1;
+}
+
+.mensaje-vacio {
+    text-align: center;
+    font-size: 18px;
+    color: #888;
+}
+
+.footer {
+    background-color: #0056b3;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+@media (max-width: 1024px) {
+    .navbar-links {
+        float: none;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .navbar-links a {
+        font-size: 14px;
+    }
+
+    .historial-item {
+        padding: 10px;
+    }
+
+    .historial-item p {
+        font-size: 14px;
+    }
+
+    .btn-primary {
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    nav {
+        text-align: center;
+        padding: 15px;
+    }
+
+    .navbar-brand {
+        display: block;
+        font-size: 20px;
+    }
+
+    .navbar-links {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .navbar-links a {
+        font-size: 14px;
+        display: block;
+        padding: 5px 0;
+    }
+
+    .container {
+        width: 95%;
+    }
+
+    h2 {
+        font-size: 28px;
+    }
+
+    .historial-item {
+        padding: 10px;
+    }
+
+    .historial-item p {
+        font-size: 14px;
+    }
+
+    .btn-primary {
+        font-size: 14px;
+        padding: 8px 15px;
+    }
 }

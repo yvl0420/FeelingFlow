@@ -42,7 +42,7 @@ export const generarHistorialPDF = async (req, res) => {
         // Crear PDF en memoria
         const doc = new PDFDocument({
             size: 'A4',
-            margin: 50, // Márgenes de 50
+            margin: 50,
         });
 
         // Establecer el tipo de contenido como PDF

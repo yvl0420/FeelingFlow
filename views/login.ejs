@@ -7,68 +7,71 @@
     <link rel="stylesheet" href="/css/login.css">
 </head>
 <body>
+
     <div class="contenedor">
         <div class="tarjeta-formulario">
             <div class="logo">
                 <h1>FeelingFlow</h1>
                 <p>Bienestar Médico y Emocional</p>
             </div>
-            
-            <div class="cambio-formulario">
-                <button id="mostrarInicioSesion" class="activo">Iniciar Sesión</button>
-                <button id="mostrarRegistro">Registrarse</button>
+
+            <div class="cambio-formulario" role="tablist">
+                <button id="mostrarInicioSesion" class="activo" role="tab" tabindex="0">Iniciar Sesión</button>
+                <button id="mostrarRegistro" role="tab" tabindex="0">Registrarse</button>
             </div>
 
-            <!-- Formulario de Inicio de Sesión -->
             <form id="formularioInicioSesion" class="activo" novalidate>
                 <div class="grupo-entrada">
                     <label for="correoInicio">Correo Electrónico</label>
-                    <input type="email" id="correoInicio" required>
-                    <span class="mensaje-error"></span>
+                    <input type="email" id="correoInicio" aria-describedby="correo-ayuda" required>
+                    <span id="correo-ayuda" class="mensaje-error" aria-live="assertive"></span>
                 </div>
                 <div class="grupo-entrada">
                     <label for="contrasenaInicio">Contraseña</label>
-                    <input type="password" id="contrasenaInicio" required minlength="8">
-                    <span class="mensaje-error"></span>
+                    <input type="password" id="contrasenaInicio" aria-describedby="contrasena-ayuda" required minlength="8">
+                    <span id="contrasena-ayuda" class="mensaje-error" aria-live="assertive"></span>
                 </div>
                 <button type="submit" class="boton-principal">Iniciar Sesión</button>
             </form>
 
-            <!-- Formulario de Registro -->
             <form id="formularioRegistro" novalidate>
-                <div class="grupo-entrada">
-                    <label for="nombre">Nombre</label>
-                    <input type="text" id="nombre" required>
-                    <span class="mensaje-error"></span>
-                </div>
-                <div class="grupo-entrada">
-                    <label for="apellido">Apellidos</label>
-                    <input type="text" id="apellido" required>
-                    <span class="mensaje-error"></span>
+                <div class="fila">
+                    <div class="grupo-entrada">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" required>
+                        <span class="mensaje-error" aria-live="assertive"></span>
+                    </div>
+                    <div class="grupo-entrada">
+                        <label for="apellido">Apellidos</label>
+                        <input type="text" id="apellido" required>
+                        <span class="mensaje-error" aria-live="assertive"></span>
+                    </div>
                 </div>
                 <div class="grupo-entrada">
                     <label for="email">Correo Electrónico</label>
                     <input type="email" id="email" required>
-                    <span class="mensaje-error"></span>
+                    <span class="mensaje-error" aria-live="assertive"></span>
                 </div>
-                <div class="grupo-entrada">
-                    <label for="telefono">Teléfono</label>
-                    <input type="tel" id="telefono" required>
-                    <span class="mensaje-error"></span>
+                <div class="fila">
+                    <div class="grupo-entrada">
+                        <label for="telefono">Teléfono</label>
+                        <input type="tel" id="telefono" required>
+                        <span class="mensaje-error" aria-live="assertive"></span>
+                    </div>
+                    <div class="grupo-entrada">
+                        <label for="tipoUsuarioRegistro">Tipo de Usuario</label>
+                        <select id="tipoUsuarioRegistro" required>
+                            <option value="">Selecciona una opción</option>
+                            <option value="paciente">Paciente</option>
+                            <option value="medico">Médico</option>
+                        </select>
+                        <span class="mensaje-error" aria-live="assertive"></span>
+                    </div>
                 </div>
                 <div class="grupo-entrada">
                     <label for="contrasenaRegistro">Contraseña</label>
                     <input type="password" id="contrasenaRegistro" required minlength="8">
-                    <span class="mensaje-error"></span>
-                </div>
-                <div class="grupo-entrada">
-                    <label for="tipoUsuarioRegistro">Tipo de Usuario</label>
-                    <select id="tipoUsuarioRegistro" required>
-                        <option value="">Selecciona un tipo de usuario</option>
-                        <option value="paciente">Paciente</option>
-                        <option value="medico">Médico</option>
-                    </select>
-                    <span class="mensaje-error"></span>
+                    <span class="mensaje-error" aria-live="assertive"></span>
                 </div>
                 <button type="submit" class="boton-principal">Registrarse</button>
             </form>

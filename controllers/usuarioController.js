@@ -1,17 +1,16 @@
 import Usuario from '../models/usuarios.js';
 import bcrypt from 'bcrypt';
 
-// Función de middleware para autenticar al usuario
 // Autenticación del usuario
 export const autenticarUsuario = (req, res, next) => {
     if (!req.session.usuario) {
         return res.redirect("/login"); // Si no hay usuario en la sesión, redirige al login
     }
-    req.user = req.session.usuario; // Asigna el usuario a req.user
-    next(); // Continúa con la ejecución de la siguiente ruta
+    req.user = req.session.usuario;
+    next();
 };
 
-
+//Función para registrar un usuario
 const registrarUsuario = async (req, res) => {
     const { nombre, apellido, email, telefono, contrasena, tipo_usuario } = req.body;
     
@@ -42,6 +41,7 @@ const registrarUsuario = async (req, res) => {
     }
 };
 
+//Función para iniciar sesión
 const loginUsuario = async (req, res) => {
     const { email, contrasena } = req.body;
 

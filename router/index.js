@@ -1,7 +1,10 @@
 import { Router } from "express";
 import { paginaInicio, login } from "../controllers/paginaController.js";
 import { registrarUsuario, loginUsuario, autenticarUsuario } from "../controllers/usuarioController.js";
-import { buscarMedicos, obtenerHorarios, reservarCita, cancelarCita, obtenerCitasUsuario, reprogramarCita, obtenerHorariosDisponibles } from "../controllers/medicoController.js";
+import { buscarMedicos, obtenerHorarios } from "../controllers/medicoController.js";
+import { reservarCita, cancelarCita, reprogramarCita } from "../controllers/reservaController.js";
+import { obtenerCitasUsuario, obtenerHorariosDisponibles } from "../controllers/citaController.js";
+import { verHistorial, generarHistorialPDF } from "../controllers/historialController.js";
 
 const router = Router();
 
@@ -21,10 +24,11 @@ router.get("/medicos", buscarMedicos);
 
 // Ruta para obtener horarios de un médico
 router.get("/horarios/:id", autenticarUsuario, obtenerHorarios);
-router.post("/reservar/:id", autenticarUsuario, reservarCita);
 
-// Ruta para cancelar una cita
+// Rutas para gestionar citas
+router.post("/reservar/:id", autenticarUsuario, reservarCita);
 router.post("/cancelar-cita/:id", autenticarUsuario, cancelarCita);
+router.post("/reprogramar-cita/:id", autenticarUsuario, reprogramarCita);
 
 // Ruta para obtener las citas del usuario
 router.get("/mis-citas", autenticarUsuario, obtenerCitasUsuario);
@@ -32,8 +36,9 @@ router.get("/mis-citas", autenticarUsuario, obtenerCitasUsuario);
 // Ruta para obtener los horarios disponibles para reprogramar una cita
 router.get("/horarios-disponibles/:citaId", autenticarUsuario, obtenerHorariosDisponibles);
 
-// Ruta para reprogramar una cita
-router.post("/reprogramar-cita/:id", autenticarUsuario, reprogramarCita);
+// Rutas para el historial
+router.get("/historial", autenticarUsuario, verHistorial);
+router.get("/historial/generar-pdf", autenticarUsuario, generarHistorialPDF);
 
 // Cerrar sesión
 router.post("/logout", (req, res) => {

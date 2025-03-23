@@ -4,26 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reservar Cita</title>
-
-    <!-- Estilos de FullCalendar -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet" />
-
-    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="/css/reservar.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="/css/reservar.css">
 
-    <!-- Estilos de Bootstrap para los modales -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-
-    <style>
-        #calendar {
-            max-width: 900px;
-            margin: 20px auto;
-        }
-    </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav>
+    <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
             <a class="navbar-brand" href="/">FeelingFlow</a>
             <div class="navbar-links">
@@ -37,8 +25,6 @@
 
     <div class="container mt-4">
         <h2>Reservar Cita</h2>
-
-        <!-- Información del Médico -->
         <div class="card mb-4">
             <div class="card-body">
                 <h5 class="card-title">Dr. <%= medico.Usuario.nombre %> <%= medico.Usuario.apellido %></h5>
@@ -47,11 +33,9 @@
             </div>
         </div>
 
-        <!-- Contenedor del Calendario -->
         <div id="calendar"></div>
     </div>
 
-    <!-- Modal de Confirmación de Reserva -->
     <div class="modal fade" id="confirmarReservaModal" tabindex="-1" aria-labelledby="confirmarReservaModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -70,7 +54,6 @@
         </div>
     </div>
 
-    <!-- Modal de Éxito -->
     <div class="modal fade" id="exitoModal" tabindex="-1" aria-labelledby="exitoModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -88,7 +71,6 @@
         </div>
     </div>
 
-    <!-- Modal de Error -->
     <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -105,6 +87,12 @@
             </div>
         </div>
     </div>
+
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <span>© 2025 FeelingFlow. Todos los derechos reservados.</span>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/es.js"></script>
@@ -129,9 +117,6 @@
                         confirmarReservaModal.hide();
                         fetch(`/reservar/<%= medico.id %>`, {
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
                             body: new URLSearchParams({ horario_id: info.event.id })
                         })
                         .then(response => {
@@ -140,7 +125,7 @@
                                 exitoModal.show();
                                 document.getElementById('aceptarExitoBtn').onclick = function() {
                                     exitoModal.hide();
-                                    info.event.remove(); // Eliminar el evento del calendario
+                                    info.event.remove();
                                 };
                             } else {
                                 var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
