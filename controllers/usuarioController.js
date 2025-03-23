@@ -1,5 +1,5 @@
 import Usuario from '../models/usuarios.js';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 // Autenticación del usuario
 export const autenticarUsuario = (req, res, next) => {
