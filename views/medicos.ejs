@@ -100,6 +100,7 @@
     </footer>
 
     <script>
+        // Cerrar sesión
         document.getElementById("cerrarSesion").addEventListener("click", () => {
             fetch("/logout", { method: "POST" })
                 .then(() => window.location.href = "/");

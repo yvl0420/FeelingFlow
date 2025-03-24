@@ -4,6 +4,7 @@ import Horario from "../models/horarios.js";
 import Cita from "../models/citas.js";
 import Usuario from "../models/usuarios.js";
 
+// Función para obtener las citas del usuario
 export const obtenerCitasUsuario = async (req, res) => {
     try {
         // Verifica que el id del paciente esté disponible en la sesión
@@ -13,7 +14,7 @@ export const obtenerCitasUsuario = async (req, res) => {
 
         console.log("Paciente ID:", req.session.usuario.id);
 
-        // Realiza la consulta a la base de datos
+        // Realiza la consulta a la base de datos para encontrar las citas del usuario
         const citas = await Cita.findAll({
             where: { paciente_id: req.session.usuario.id },
             include: [
@@ -39,7 +40,6 @@ export const obtenerCitasUsuario = async (req, res) => {
         // Verifica las citas obtenidas en la consola
         console.log("Citas obtenidas:", citas);
 
-        // Si las citas son instancias de Sequelize, conviértelas a un formato plano
         const citasFormateadas = citas.map(cita => cita.get({ plain: true }));
 
         console.log("Citas formateadas:", citasFormateadas);
@@ -52,6 +52,7 @@ export const obtenerCitasUsuario = async (req, res) => {
     }
 };
 
+// Función para obtener los horarios disponibles para reprogramar una cita
 export const obtenerHorariosDisponibles = async (req, res) => {
     try {
         const { citaId } = req.params;

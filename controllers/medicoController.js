@@ -23,11 +23,12 @@ export const obtenerHorarios = async (req, res) => {
             return res.redirect(`/panel?mensaje=Médico no encontrado`);
         }
 
+        //Obtener los horarios disponibles del médico
         const horarios = await Horario.findAll({
             where: { medico_id: medicoId, disponible: true },
         });
 
-        // Convertimos los horarios
+        // Convertir los horarios a un formato adecuado para el calendario
         const eventos = horarios.map(horario => ({
             id: horario.id,
             title: "Disponible",
@@ -36,6 +37,7 @@ export const obtenerHorarios = async (req, res) => {
             allDay: false
         }));
 
+        // Renderizar la vista de reservar
         res.render('reservar', { medico, eventos: JSON.stringify(eventos) });
     } catch (error) {
         console.error("Error al obtener los horarios:", error);
@@ -43,11 +45,11 @@ export const obtenerHorarios = async (req, res) => {
     }
 };
 
-// Buscar médicos con filtros (especialidad, ubicación y disponibilidad)
+// Función para buscar médicos con filtros (especialidad, ubicación y disponibilidad)
 export const buscarMedicos = async (req, res) => {
     try {
         const { especialidad, ubicacion, page = 1 } = req.query;
-        const limit = 5;
+        const limit = 5; // Número de resultados por página
         const offset = (page - 1) * limit;
 
         // Filtros dinámicos para la búsqueda
@@ -62,8 +64,9 @@ export const buscarMedicos = async (req, res) => {
             offset,
         });
 
-        const totalPaginas = Math.ceil(count / limit);
+        const totalPaginas = Math.ceil(count / limit);// Calcular el número total de páginas
 
+        // Renderizar la vista de búsqueda de médicos con los resultados obtenidos
         res.render("medicos", {
             titulo: "Buscar Médicos",
             clase: "medicos",

@@ -7,12 +7,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Función para cambiar entre formularios
     function cambiarFormulario(mostrar) {
+        // Mostrar el formulario de inicio de sesión y ocultar el de registro
         if (mostrar === "inicioSesion") {
             formularioInicioSesion.classList.add("activo");
             formularioRegistro.classList.remove("activo");
             botonInicioSesion.classList.add("activo");
             botonRegistro.classList.remove("activo");
         } else {
+            // Mostrar el formulario de registro y ocultar el de inicio de sesión
             formularioRegistro.classList.add("activo");
             formularioInicioSesion.classList.remove("activo");
             botonRegistro.classList.add("activo");
@@ -48,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (response.redirected) {
-                window.location.href = response.url; // Redirige al panel si el registro es exitoso
+                window.location.href = response.url;// Redirige al panel si el registro es exitoso
             } else {
                 const data = await response.json();
                 alert(data.error || 'Hubo un error al registrar el usuario');

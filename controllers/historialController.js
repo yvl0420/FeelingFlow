@@ -5,17 +5,20 @@ import PDFDocument from "pdfkit";
 // Mostrar historial médico del usuario
 export const verHistorial = async (req, res) => {
     try {
+        //Obtener el id del usuario
         const usuarioId = req.user?.id;
         
         if (!usuarioId) {
             return res.status(401).send("No estás autenticado.");
         }
 
+        // Obtener el historial médico del usuario
         const historial = await Historial.findAll({
             where: { paciente_id: usuarioId },
             order: [["fecha_registro", "DESC"]],
         });
 
+        // Renderizar la vista del historial médico
         res.render("historial", { historial });
     } catch (error) {
         console.error("Error al obtener el historial médico:", error);

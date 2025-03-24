@@ -15,13 +15,16 @@ const registrarUsuario = async (req, res) => {
     const { nombre, apellido, email, telefono, contrasena, tipo_usuario } = req.body;
     
     try {
+        // Verificar si el correo electrónico ya está registrado
         const usuarioExistente = await Usuario.findOne({ where: { email } });
         if (usuarioExistente) {
             return res.status(400).json({ error: 'El correo electrónico ya está registrado' });
         }
 
+        // Cifrar la contraseña
         const contrasenaCifrada = await bcrypt.hash(contrasena, 10);
 
+        // Crear un nuevo usuario en la base de datos
         const nuevoUsuario = await Usuario.create({
             nombre,
             apellido,
@@ -34,6 +37,7 @@ const registrarUsuario = async (req, res) => {
         // Guardar usuario en sesión
         req.session.usuario = nuevoUsuario; 
 
+        //Redirigir al panel de usuario
         res.redirect("/panel");
     } catch (error) {
         console.log(error);
@@ -46,12 +50,15 @@ const loginUsuario = async (req, res) => {
     const { email, contrasena } = req.body;
 
     try {
+        // Buscar al usuario por su correo electrónico
         const usuario = await Usuario.findOne({ where: { email } });
 
+        //Verificar si existe
         if (!usuario) {
             return res.status(400).json({ error: 'Usuario o contraseña incorrectos' });
         }
 
+        // Comparar la contraseña ingresada con la contraseña cifrada
         const esValido = await bcrypt.compare(contrasena, usuario.password);
         if (!esValido) {
             return res.status(400).json({ error: 'Usuario o contraseña incorrectos' });

@@ -6,37 +6,41 @@ import nodemailer from "nodemailer";
 
 // Procesar la reserva de cita desde el calendario
 export const reservarCita = async (req, res) => {
-    const { id } = req.params;
-    const { horario_id } = req.body;
+    const { id } = req.params;//Id del médico
+    const { horario_id } = req.body;//Id del horario seleccionado
 
     console.log("Datos recibidos en el servidor:", req.body);
 
     if (!horario_id) {
-        console.error("⚠️ Faltan datos necesarios para la reserva");
+        console.error("Faltan datos necesarios para la reserva");
         return res.status(400).send("Faltan datos necesarios para la reserva");
     }
 
     try {
+        //Buscar el horario seleccionado
         const horarioSeleccionado = await Horario.findByPk(horario_id);
 
+        //Verificar si el horario está disponible
         if (!horarioSeleccionado || !horarioSeleccionado.disponible) {
             console.error("Horario no disponible");
             return res.status(400).send("Horario no disponible");
         }
 
-        // Asegúrate de que req.session.usuario esté definido
+        //Verificar si el usuario está autenticado
         if (!req.session.usuario || !req.session.usuario.id) {
             console.error("Usuario no autenticado");
             return res.status(401).send("Usuario no autenticado");
         }
 
+        //Buscar al usuario
         const usuario = await Usuario.findByPk(req.session.usuario.id);
 
         if (!usuario) {
-            console.error("⚠️ Usuario no encontrado");
+            console.error("Usuario no encontrado");
             return res.status(400).send("Usuario no encontrado");
         }
 
+        //Crear la cita
         const cita = await Cita.create({
             medico_id: id,
             paciente_id: usuario.id,
@@ -44,6 +48,7 @@ export const reservarCita = async (req, res) => {
             estado: "pendiente",
         });
 
+        //Marcar el horario como no disponible
         await horarioSeleccionado.update({ disponible: false });
 
         // Obtener la información del médico
@@ -52,7 +57,7 @@ export const reservarCita = async (req, res) => {
         });
 
         if (!medico) {
-            console.error("⚠️ Médico no encontrado");
+            console.error("Médico no encontrado");
             return res.status(400).send("Médico no encontrado");
         }
 
@@ -81,9 +86,10 @@ export const reservarCita = async (req, res) => {
                    <p>Gracias por confiar en nosotros.</p>`
         };
 
+        //Enviar el correo electrónico
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
-                console.error("❌ Error al enviar el correo electrónico:", error);
+                console.error("Error al enviar el correo electrónico:", error);
                 return res.status(500).send("Error al enviar el correo electrónico");
             } else {
                 console.log('Correo electrónico enviado: ' + info.response);
@@ -91,15 +97,15 @@ export const reservarCita = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error("❌ Error al reservar la cita:", error);
+        console.error("Error al reservar la cita:", error);
         res.status(500).send("Error al reservar la cita");
     }
 };
 
-// Procesar la cancelación de cita
+//Procesar la cancelación de cita
 export const cancelarCita = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id } = req.params;//Id de la cita a cancelar
 
         // Buscar la cita
         const cita = await Cita.findByPk(id, {
@@ -123,21 +129,22 @@ export const cancelarCita = async (req, res) => {
                 {
                     model: Horario,
                     as: "Horario",
-                    attributes: ["id", "fecha", "hora_inicio", "hora_fin", "disponible"] // Asegúrate de incluir el campo 'id'
+                    attributes: ["id", "fecha", "hora_inicio", "hora_fin", "disponible"]
                 }
             ]
         });
 
+        //Verificar si la cita existe
         if (!cita) {
             return res.status(404).json({ success: false, message: "Cita no encontrada" });
         }
 
-        // Asegúrate de que el horario tiene un id
+        // Obtener el ID del horario de la cita
         const horarioId = cita.Horario.id;
         
-        // Actualizar el horario a disponible
+        //Actualizar el horario a disponible
         await Horario.update({ disponible: true }, {
-            where: { id: horarioId } // Aquí actualizamos el horario usando el id
+            where: { id: horarioId } //Aquí actualizamos el horario usando el id
         });
 
         // Eliminar la cita
@@ -168,9 +175,10 @@ export const cancelarCita = async (req, res) => {
                    <p>Gracias por confiar en nosotros.</p>`
         };
 
+        //Enviar el correo electrónico
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
-                console.error("❌ Error al enviar el correo electrónico:", error);
+                console.error("Error al enviar el correo electrónico:", error);
                 return res.status(500).send("Error al enviar el correo electrónico");
             } else {
                 console.log('Correo electrónico enviado: ' + info.response);
@@ -183,6 +191,7 @@ export const cancelarCita = async (req, res) => {
     }
 };
 
+//Función para reprogramar una cita
 export const reprogramarCita = async (req, res) => {
     try {
         const { id } = req.params;  // ID de la cita a reprogramar
@@ -209,6 +218,7 @@ export const reprogramarCita = async (req, res) => {
             ]
         });
 
+        // Verificar si la cita existe
         if (!cita) {
             console.error("Cita no encontrada");
             return res.status(404).json({ success: false, message: "Cita no encontrada" });
@@ -267,7 +277,7 @@ export const reprogramarCita = async (req, res) => {
 
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
-                console.error("❌ Error al enviar el correo electrónico:", error);
+                console.error("Error al enviar el correo electrónico:", error);
                 return res.status(500).send("Error al enviar el correo electrónico");
             } else {
                 console.log('Correo electrónico enviado: ' + info.response);

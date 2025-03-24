@@ -100,16 +100,19 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            //Obtener el evento del calendario
             var calendarEl = document.getElementById("calendar");
 
             var eventos = <%- eventos %>;
 
+            //Inicializar el calendario con FullCalendar
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: "dayGridMonth",
                 locale: "es",
-                events: eventos,
-                selectable: true,
+                events: eventos,//Eventos a mostrar en el calendario
+                selectable: true,// Permitir seleccionar eventos
                 eventClick: function(info) {
+                    // Mostrar el modal de confirmación de reserva
                     var confirmarReservaModal = new bootstrap.Modal(document.getElementById('confirmarReservaModal'));
                     confirmarReservaModal.show();
 
@@ -125,7 +128,7 @@
                                 exitoModal.show();
                                 document.getElementById('aceptarExitoBtn').onclick = function() {
                                     exitoModal.hide();
-                                    info.event.remove();
+                                    info.event.remove();// Eliminar el evento del calendario
                                 };
                             } else {
                                 var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
@@ -141,7 +144,14 @@
                 }
             });
 
+            //Renderizar el calendario
             calendar.render();
+        });
+
+        // Cerrar sesión
+        document.getElementById("cerrarSesion").addEventListener("click", () => {
+            fetch("/logout", { method: "POST" })
+                .then(() => window.location.href = "/");
         });
     </script>
 </body>
