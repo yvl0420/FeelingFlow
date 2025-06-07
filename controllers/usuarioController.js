@@ -1,30 +1,29 @@
 import Usuario from '../models/usuarios.js';
+import Medico from '../models/medicos.js';
 import bcrypt from 'bcryptjs';
 
 // Autenticación del usuario
-export const autenticarUsuario = (req, res, next) => {
+const autenticarUsuario = (req, res, next) => {
     if (!req.session.usuario) {
-        return res.redirect("/login"); // Si no hay usuario en la sesión, redirige al login
+        return res.redirect("/login");
     }
     req.user = req.session.usuario;
     next();
 };
 
-//Función para registrar un usuario
+// Registrar usuario o médico
 const registrarUsuario = async (req, res) => {
-    const { nombre, apellido, email, telefono, contrasena, tipo_usuario } = req.body;
-    
+    const { nombre, apellido, email, telefono, contrasena, tipo_usuario, especialidad, ubicacion } = req.body;
+
     try {
-        // Verificar si el correo electrónico ya está registrado
         const usuarioExistente = await Usuario.findOne({ where: { email } });
         if (usuarioExistente) {
             return res.status(400).json({ error: 'El correo electrónico ya está registrado' });
         }
 
-        // Cifrar la contraseña
         const contrasenaCifrada = await bcrypt.hash(contrasena, 10);
 
-        // Crear un nuevo usuario en la base de datos
+        // Crear usuario
         const nuevoUsuario = await Usuario.create({
             nombre,
             apellido,
@@ -34,44 +33,54 @@ const registrarUsuario = async (req, res) => {
             tipo_usuario,
         });
 
-        // Guardar usuario en sesión
-        req.session.usuario = nuevoUsuario; 
+        // Si es médico, crear registro en tabla médicos
+        if (tipo_usuario === "medico") {
+            await Medico.create({
+                usuario_id: nuevoUsuario.id,
+                especialidad,
+                ubicacion,
+            });
+            req.session.usuario = nuevoUsuario;
+            return res.json({ redirect: "/panel_medico" });
+        }
 
-        //Redirigir al panel de usuario
-        res.redirect("/panel");
+        // Guardar usuario en sesión y redirigir a panel normal
+        req.session.usuario = nuevoUsuario;
+        res.json({ redirect: "/panel" });
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: 'Hubo un problema al registrar el usuario' });
+        console.error('Error en registrarUsuario:', error);
+        res.status(500).json({ error: 'Hubo un problema al registrar el usuario', detalle: error.message });
     }
 };
 
-//Función para iniciar sesión
+// Iniciar sesión y redirigir según tipo
 const loginUsuario = async (req, res) => {
     const { email, contrasena } = req.body;
 
     try {
-        // Buscar al usuario por su correo electrónico
         const usuario = await Usuario.findOne({ where: { email } });
-
-        //Verificar si existe
         if (!usuario) {
             return res.status(400).json({ error: 'Usuario o contraseña incorrectos' });
         }
 
-        // Comparar la contraseña ingresada con la contraseña cifrada
         const esValido = await bcrypt.compare(contrasena, usuario.password);
         if (!esValido) {
             return res.status(400).json({ error: 'Usuario o contraseña incorrectos' });
         }
 
-        // Guardar usuario en sesión
-        req.session.usuario = usuario; 
+        req.session.usuario = usuario;
 
-        res.redirect("/panel"); // Redirigir al panel de usuario
+        // Si el usuario tiene perfil de médico, responde con la URL de panel médico
+        const medico = await Medico.findOne({ where: { usuario_id: usuario.id } });
+        if (medico) {
+            return res.json({ redirect: "/panel_medico" });
+        } else {
+            return res.json({ redirect: "/panel" });
+        }
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: 'Hubo un problema al iniciar sesión' });
+        console.error('Error en loginUsuario:', error);
+        res.status(500).json({ error: 'Hubo un problema al iniciar sesión', detalle: error.message });
     }
 };
 
-export { registrarUsuario, loginUsuario };
+export { autenticarUsuario, registrarUsuario, loginUsuario };

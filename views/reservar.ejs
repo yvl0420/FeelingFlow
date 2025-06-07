@@ -8,20 +8,25 @@
     <link rel="stylesheet" href="/css/reservar.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="/css/reservar.css">
-
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container">
-            <a class="navbar-brand" href="/">FeelingFlow</a>
-            <div class="navbar-links">
-                <a href="/">Inicio</a>
-                <a href="/panel">Panel</a>
-                <a href="/mis-citas">Mis Citas</a>
-                <button id="cerrarSesion" class="btn btn-link">Cerrar Sesión</button>
+    <div class="container">
+        <a class="navbar-brand" href="/">FeelingFlow</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarReservar"
+            aria-controls="navbarReservar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarReservar">
+            <div class="navbar-nav ms-auto">
+                <a href="/" class="nav-link">Inicio</a>
+                <a href="/panel" class="nav-link">Panel</a>
+                <a href="/medicos" class="nav-link">Volver</a>
+                <button id="cerrarSesion" class="btn btn-primary ms-2">Cerrar Sesión</button>
             </div>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <div class="container mt-4">
         <h2>Reservar Cita</h2>
@@ -36,6 +41,7 @@
         <div id="calendar"></div>
     </div>
 
+    <!-- Modal de Confirmación con campo Motivo -->
     <div class="modal fade" id="confirmarReservaModal" tabindex="-1" aria-labelledby="confirmarReservaModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -45,6 +51,11 @@
                 </div>
                 <div class="modal-body">
                     <p>¿Estás seguro de que deseas reservar esta cita?</p>
+                    <div class="mb-3">
+                        <label for="motivoCita" class="form-label">Motivo de la cita</label>
+                        <textarea id="motivoCita" class="form-control" rows="3" placeholder="Describe el motivo de tu consulta" required></textarea>
+                        <div id="motivoError" class="text-danger mt-1" style="display:none;">Por favor, indica el motivo de la cita.</div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -100,27 +111,39 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            //Obtener el evento del calendario
             var calendarEl = document.getElementById("calendar");
-
             var eventos = <%- eventos %>;
 
-            //Inicializar el calendario con FullCalendar
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: "dayGridMonth",
                 locale: "es",
-                events: eventos,//Eventos a mostrar en el calendario
-                selectable: true,// Permitir seleccionar eventos
+                events: eventos,
+                selectable: true,
                 eventClick: function(info) {
-                    // Mostrar el modal de confirmación de reserva
                     var confirmarReservaModal = new bootstrap.Modal(document.getElementById('confirmarReservaModal'));
+                    document.getElementById('motivoCita').value = "";
+                    document.getElementById('motivoError').style.display = "none";
                     confirmarReservaModal.show();
 
                     document.getElementById('confirmarReservaBtn').onclick = function() {
+                        var motivo = document.getElementById('motivoCita').value.trim();
+                        if (!motivo) {
+                            document.getElementById('motivoError').style.display = "block";
+                            document.getElementById('motivoCita').focus();
+                            return;
+                        } else {
+                            document.getElementById('motivoError').style.display = "none";
+                        }
                         confirmarReservaModal.hide();
                         fetch(`/reservar/<%= medico.id %>`, {
                             method: 'POST',
-                            body: new URLSearchParams({ horario_id: info.event.id })
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams({ 
+                                horario_id: info.event.id,
+                                motivo: motivo
+                            })
                         })
                         .then(response => {
                             if (response.ok) {
@@ -128,7 +151,7 @@
                                 exitoModal.show();
                                 document.getElementById('aceptarExitoBtn').onclick = function() {
                                     exitoModal.hide();
-                                    info.event.remove();// Eliminar el evento del calendario
+                                    info.event.remove();
                                 };
                             } else {
                                 var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
@@ -144,7 +167,6 @@
                 }
             });
 
-            //Renderizar el calendario
             calendar.render();
         });
 

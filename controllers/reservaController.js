@@ -6,33 +6,33 @@ import nodemailer from "nodemailer";
 
 // Procesar la reserva de cita desde el calendario
 export const reservarCita = async (req, res) => {
-    const { id } = req.params;//Id del médico
-    const { horario_id } = req.body;//Id del horario seleccionado
+    const { id } = req.params; // Id del médico
+    const { horario_id, motivo } = req.body; // Id del horario seleccionado y motivo
 
     console.log("Datos recibidos en el servidor:", req.body);
 
-    if (!horario_id) {
+    if (!horario_id || !motivo || motivo.trim() === "") {
         console.error("Faltan datos necesarios para la reserva");
         return res.status(400).send("Faltan datos necesarios para la reserva");
     }
 
     try {
-        //Buscar el horario seleccionado
+        // Buscar el horario seleccionado
         const horarioSeleccionado = await Horario.findByPk(horario_id);
 
-        //Verificar si el horario está disponible
+        // Verificar si el horario está disponible
         if (!horarioSeleccionado || !horarioSeleccionado.disponible) {
             console.error("Horario no disponible");
             return res.status(400).send("Horario no disponible");
         }
 
-        //Verificar si el usuario está autenticado
+        // Verificar si el usuario está autenticado
         if (!req.session.usuario || !req.session.usuario.id) {
             console.error("Usuario no autenticado");
             return res.status(401).send("Usuario no autenticado");
         }
 
-        //Buscar al usuario
+        // Buscar al usuario
         const usuario = await Usuario.findByPk(req.session.usuario.id);
 
         if (!usuario) {
@@ -40,15 +40,16 @@ export const reservarCita = async (req, res) => {
             return res.status(400).send("Usuario no encontrado");
         }
 
-        //Crear la cita
+        // Crear la cita con motivo
         const cita = await Cita.create({
             medico_id: id,
             paciente_id: usuario.id,
             horario_id,
+            motivo,
             estado: "pendiente",
         });
 
-        //Marcar el horario como no disponible
+        // Marcar el horario como no disponible
         await horarioSeleccionado.update({ disponible: false });
 
         // Obtener la información del médico
@@ -70,20 +71,29 @@ export const reservarCita = async (req, res) => {
             }
         });
 
+        // Correo con algo de CSS para mejor visualización
         const mailOptions = {
             from: 'prueba.yv1@gmail.com',
             to: usuario.email,
             subject: 'Confirmación de Reserva de Cita',
-            html: `<p>Estimado/a ${usuario.nombre},</p>
-                   <p>Su cita ha sido reservada correctamente.</p>
-                   <p>Detalles de la cita:</p>
-                   <ul>
-                       <li>Médico: Dr. ${medico.Usuario.nombre} ${medico.Usuario.apellido}</li>
-                       <li>Especialidad: ${medico.especialidad}</li>
-                       <li>Fecha: ${horarioSeleccionado.fecha}</li>
-                       <li>Hora: ${horarioSeleccionado.hora_inicio} - ${horarioSeleccionado.hora_fin}</li>
-                   </ul>
-                   <p>Gracias por confiar en nosotros.</p>`
+            html: `
+                <div style="font-family: Arial, sans-serif; background: #f6f8fa; padding: 24px;">
+                    <div style="max-width: 500px; margin: auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,86,179,0.08); padding: 24px;">
+                        <h2 style="color: #0056b3; text-align: center; margin-bottom: 18px;">Reserva Confirmada</h2>
+                        <p>Estimado/a <b>${usuario.nombre}</b>,</p>
+                        <p>Su cita ha sido reservada correctamente.</p>
+                        <p style="margin-bottom: 10px;"><b>Detalles de la cita:</b></p>
+                        <ul style="list-style: none; padding: 0;">
+                            <li><b>Médico:</b> Dr. ${medico.Usuario.nombre} ${medico.Usuario.apellido}</li>
+                            <li><b>Especialidad:</b> ${medico.especialidad}</li>
+                            <li><b>Fecha:</b> ${horarioSeleccionado.fecha}</li>
+                            <li><b>Hora:</b> ${horarioSeleccionado.hora_inicio} - ${horarioSeleccionado.hora_fin}</li>
+                            <li><b>Motivo:</b> ${motivo}</li>
+                        </ul>
+                        <p style="margin-top: 18px; color: #888;">Gracias por confiar en nosotros.</p>
+                    </div>
+                </div>
+            `
         };
 
         //Enviar el correo electrónico
@@ -105,7 +115,7 @@ export const reservarCita = async (req, res) => {
 //Procesar la cancelación de cita
 export const cancelarCita = async (req, res) => {
     try {
-        const { id } = req.params;//Id de la cita a cancelar
+        const { id } = req.params; //Id de la cita a cancelar
 
         // Buscar la cita
         const cita = await Cita.findByPk(id, {
@@ -116,7 +126,7 @@ export const cancelarCita = async (req, res) => {
                     include: [
                         {
                             model: Usuario,
-                            as: "Usuario", 
+                            as: "Usuario",
                             attributes: ["nombre", "apellido"]
                         }
                     ]
@@ -141,10 +151,10 @@ export const cancelarCita = async (req, res) => {
 
         // Obtener el ID del horario de la cita
         const horarioId = cita.Horario.id;
-        
+
         //Actualizar el horario a disponible
         await Horario.update({ disponible: true }, {
-            where: { id: horarioId } //Aquí actualizamos el horario usando el id
+            where: { id: horarioId }
         });
 
         // Eliminar la cita
@@ -159,20 +169,29 @@ export const cancelarCita = async (req, res) => {
             }
         });
 
+        // Correo con algo de CSS para mejor visualización
         const mailOptions = {
             from: 'prueba.yv1@gmail.com',
             to: cita.Paciente.email,
             subject: 'Confirmación de Cancelación de Cita',
-            html: `<p>Estimado/a ${cita.Paciente.nombre},</p>
-                   <p>Su cita ha sido cancelada correctamente.</p>
-                   <p>Detalles de la cita cancelada:</p>
-                   <ul>
-                       <li>Médico: Dr. ${cita.Medico.Usuario.nombre} ${cita.Medico.Usuario.apellido}</li>
-                       <li>Especialidad: ${cita.Medico.especialidad}</li>
-                       <li>Fecha: ${cita.Horario.fecha}</li>
-                       <li>Hora: ${cita.Horario.hora_inicio} - ${cita.Horario.hora_fin}</li>
-                   </ul>
-                   <p>Gracias por confiar en nosotros.</p>`
+            html: `
+                <div style="font-family: Arial, sans-serif; background: #f6f8fa; padding: 24px;">
+                    <div style="max-width: 500px; margin: auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,86,179,0.08); padding: 24px;">
+                        <h2 style="color: #FF4C4C; text-align: center; margin-bottom: 18px;">Cita Cancelada</h2>
+                        <p>Estimado/a <b>${cita.Paciente.nombre}</b>,</p>
+                        <p>Su cita ha sido cancelada correctamente.</p>
+                        <p style="margin-bottom: 10px;"><b>Detalles de la cita cancelada:</b></p>
+                        <ul style="list-style: none; padding: 0;">
+                            <li><b>Médico:</b> Dr. ${cita.Medico.Usuario.nombre} ${cita.Medico.Usuario.apellido}</li>
+                            <li><b>Especialidad:</b> ${cita.Medico.especialidad}</li>
+                            <li><b>Fecha:</b> ${cita.Horario.fecha}</li>
+                            <li><b>Hora:</b> ${cita.Horario.hora_inicio} - ${cita.Horario.hora_fin}</li>
+                            ${cita.motivo ? `<li><b>Motivo:</b> ${cita.motivo}</li>` : ""}
+                        </ul>
+                        <p style="margin-top: 18px; color: #888;">Gracias por confiar en nosotros.</p>
+                    </div>
+                </div>
+            `
         };
 
         //Enviar el correo electrónico
@@ -259,20 +278,29 @@ export const reprogramarCita = async (req, res) => {
             }
         });
 
+        // Correo con algo de CSS para mejor visualización
         const mailOptions = {
             from: 'prueba.yv1@gmail.com',
             to: cita.Paciente.email,
             subject: 'Confirmación de Reprogramación de Cita',
-            html: `<p>Estimado/a ${cita.Paciente.nombre},</p>
-                   <p>Su cita ha sido reprogramada correctamente.</p>
-                   <p>Detalles de la cita reprogramada:</p>
-                   <ul>
-                       <li>Médico: Dr. ${cita.Medico.Usuario.nombre} ${cita.Medico.Usuario.apellido}</li>
-                       <li>Especialidad: ${cita.Medico.especialidad}</li>
-                       <li>Fecha: ${nuevoHorario.fecha}</li>
-                       <li>Hora: ${nuevoHorario.hora_inicio} - ${nuevoHorario.hora_fin}</li>
-                   </ul>
-                   <p>Gracias por confiar en nosotros.</p>`
+            html: `
+                <div style="font-family: Arial, sans-serif; background: #f6f8fa; padding: 24px;">
+                    <div style="max-width: 500px; margin: auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,86,179,0.08); padding: 24px;">
+                        <h2 style="color: #0056b3; text-align: center; margin-bottom: 18px;">Cita Reprogramada</h2>
+                        <p>Estimado/a <b>${cita.Paciente.nombre}</b>,</p>
+                        <p>Su cita ha sido reprogramada correctamente.</p>
+                        <p style="margin-bottom: 10px;"><b>Detalles de la cita reprogramada:</b></p>
+                        <ul style="list-style: none; padding: 0;">
+                            <li><b>Médico:</b> Dr. ${cita.Medico.Usuario.nombre} ${cita.Medico.Usuario.apellido}</li>
+                            <li><b>Especialidad:</b> ${cita.Medico.especialidad}</li>
+                            <li><b>Fecha:</b> ${nuevoHorario.fecha}</li>
+                            <li><b>Hora:</b> ${nuevoHorario.hora_inicio} - ${nuevoHorario.hora_fin}</li>
+                            ${cita.motivo ? `<li><b>Motivo:</b> ${cita.motivo}</li>` : ""}
+                        </ul>
+                        <p style="margin-top: 18px; color: #888;">Gracias por confiar en nosotros.</p>
+                    </div>
+                </div>
+            `
         };
 
         transporter.sendMail(mailOptions, (error, info) => {

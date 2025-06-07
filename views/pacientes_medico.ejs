@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Pacientes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+    <link rel="stylesheet" href="/css/paciente_medico.css" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light" role="navigation" aria-label="Menú principal">
+      <div class="container">
+        <a class="navbar-brand fw-bold" href="/" aria-label="Ir a la página de inicio" style="font-family: 'Nunito Sans', Arial, sans-serif">FeelingFlow</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMedico" aria-controls="navbarMedico" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarMedico">
+          <div class="navbar-nav ms-auto">
+            <a class="nav-link" href="/" aria-current="page">Inicio</a>
+            <a class="nav-link active" href="/panel_medico">Panel Médico</a>
+            <a class="nav-link" href="/medico/ajustes" aria-label="Ajustes">
+              <i class="fa fa-cog" aria-hidden="true" style="font-size: 1.3em"></i>
+            </a>
+            <a class="nav-link" href="#" id="cerrarSesion" aria-label="Cerrar sesión del médico">Cerrar Sesión</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="main-section">
+      <div class="contenedor-historial">
+        <h2>Pacientes</h2>
+        <form class="mb-4" method="get" action="/medico/pacientes" autocomplete="off">
+          <div class="row g-2 align-items-center">
+            <div class="col-12 col-md-6">
+              <input
+                type="text"
+                class="form-control"
+                name="nombre"
+                placeholder="Buscar por nombre o apellido"
+                value="<%= nombre || '' %>"
+                aria-label="Buscar por nombre o apellido"
+              />
+            </div>
+            <div class="col-12 col-md-2">
+              <button type="submit" class="btn btn-primary w-100">
+                <i class="fa fa-search"></i> Buscar
+              </button>
+            </div>
+          </div>
+        </form>
+        <div class="table-responsive">
+          <table class="table-custom" role="table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Ver Historial</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (pacientes.length > 0) { %>
+                <% pacientes.forEach(p => { %>
+                  <tr>
+                    <td><%= p.nombre %> <%= p.apellido %></td>
+                    <td><%= p.email %></td>
+                    <td>
+                      <a href="/medico/historial/<%= p.id %>" class="btn">Ver Historial</a>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="3">No se encontraron pacientes.</td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+        <% if (totalPaginas > 1) { %>
+          <nav aria-label="Paginación de pacientes">
+            <ul class="pagination justify-content-center">
+              <% for (let i = 1; i <= totalPaginas; i++) { %>
+                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                  <a class="page-link"
+                     href="?page=<%= i %>&nombre=<%= nombre ? encodeURIComponent(nombre) : '' %>"
+                     aria-label="Página <%= i %>">
+                    <%= i %>
+                  </a>
+                </li>
+              <% } %>
+            </ul>
+          </nav>
+        <% } %>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="container-footer">
+        <p>&copy; 2025 FeelingFlow. Todos los derechos reservados.</p>
+      </div>
+    </footer>
+    <script>
+      document.getElementById("cerrarSesion").addEventListener("click", () => {
+        fetch("/logout", { method: "POST" }).then(() => (window.location.href = "/"));
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

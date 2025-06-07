@@ -1,0 +1,215 @@
+:root {
+    --azul-1: #12b3ff;
+    --azul-2: #179be6;
+    --azul-3: #0e6fa8;
+    --azul-4: #05446b;
+    --azul-5: #011d29;
+    --azul-navbar: #eaf6fd;
+    --blanco: #fff;
+    --gris-claro: #e3eaf1;
+    --gris-medio: #b5d0e6;
+    --azul-btn-hover: #0e6fa8;
+}
+
+html, body {
+    min-height: 100%;
+    height: 100%;
+}
+
+body {
+    font-family: 'Nunito Sans', Arial, sans-serif;
+    background-color: var(--azul-5);
+    color: var(--blanco);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* NAVBAR */
+.navbar {
+    background: var(--azul-navbar) !important;
+    min-height: 72px;
+    border-bottom: 1px solid #d6eaf8;
+    width: 100%;
+}
+
+.navbar-brand {
+    font-size: 28px;
+    color: var(--azul-1) !important;
+    text-decoration: none;
+    font-weight: bold;
+    font-family: 'Nunito Sans', Arial, sans-serif !important;
+    letter-spacing: 1px;
+}
+
+.navbar-nav {
+    gap: 28px;
+    align-items: center;
+    display: flex;
+}
+
+.nav-link {
+    color: var(--azul-3) !important;
+    text-decoration: none;
+    font-size: 18px;
+    font-family: 'Nunito Sans', Arial, sans-serif !important;
+    font-weight: 700;
+    background: none;
+    border: none;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.nav-link:hover,
+.nav-link.active,
+.nav-link:focus {
+    color: var(--azul-1) !important;
+}
+
+#cerrarSesion {
+    background-color: var(--azul-2);
+    color: var(--blanco) !important;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 32px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 20px;
+    transition: background 0.2s, color 0.2s, transform 0.15s;
+    text-align: center;
+    font-weight: bold;
+    display: inline-block;
+    font-family: 'Nunito Sans', Arial, sans-serif;
+    box-shadow: 0px 4px 16px rgba(6, 48, 80, 0.13);
+}
+
+#cerrarSesion:hover,
+#cerrarSesion:focus {
+    background-color: var(--azul-btn-hover);
+    color: #fff !important;
+    transform: translateY(-2px) scale(1.03);
+    outline: 2px solid var(--azul-2);
+}
+
+/* TITULO */
+h2 {
+    color: var(--azul-1);
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.historial-resumen {
+    color: var(--azul-1);
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    margin-bottom: 18px;
+}
+
+.table-custom {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 18px;
+    background: var(--azul-5);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(6,48,80,0.06);
+}
+
+.table-custom th, .table-custom td {
+    padding: 14px 10px;
+    text-align: center;
+    border-bottom: 1px solid #0e6fa8;
+    font-size: 16px;
+}
+
+.table-custom th {
+    background-color: var(--azul-3);
+    color: var(--blanco);
+    font-weight: bold;
+}
+
+.table-custom td {
+    background-color: var(--gris-claro);
+    color: var(--azul-4);
+}
+
+.table-custom tr:nth-child(even) td {
+    background-color: var(--gris-medio);
+}
+
+.table-custom tr:last-child td {
+    border-bottom: none;
+}
+
+.historial-vacio-msg {
+    color: #19c2ff !important;
+    font-size: 1.18rem;
+    font-weight: 700;
+    opacity: 1 !important;
+    letter-spacing: 0.5px;
+    display: block;
+    text-align: center;
+    margin: 18px 0 10px 0;
+}
+
+/* FOOTER */
+.footer {
+    background: var(--azul-3);
+    color: var(--blanco);
+    padding: 32px 0 32px 0;
+    text-align: center;
+    width: 100%;
+    margin-top: auto;
+    font-weight: bold;
+    letter-spacing: 1px;
+    border-top: none;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+    .navbar-nav {
+        flex-direction: column;
+        gap: 24px;
+        align-items: center;
+        justify-content: center;
+    }
+    #cerrarSesion {
+        width: 120px;
+        padding: 8px 0;
+        margin-left: 0;
+        font-size: 15px;
+        display: block;
+        margin-right: 0;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    .table-custom th, .table-custom td {
+        font-size: 15px;
+        padding: 10px 4px;
+    }
+}
+
+.panel-section, .contenedor-historial {
+    padding-top: 32px;
+    padding-bottom: 32px;
+}
+
+@media (max-width: 700px) {
+    h2 {
+        font-size: 22px;
+    }
+    .table-custom th, .table-custom td {
+        font-size: 13px;
+        padding: 8px 2px;
+    }
+    .historial-resumen {
+        flex-direction: column;
+        gap: 8px;
+        font-size: 1rem;
+    }
+}

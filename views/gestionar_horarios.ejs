@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FeelingFlow - Gestionar Horarios</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/gestionar_horarios.css">
+</head>
+<body>
+    <div class="main-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white" role="navigation" aria-label="Navegación principal">
+            <div class="container">
+                <a class="navbar-brand" href="/" aria-label="Ir a la página de inicio">FeelingFlow</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHorarios"
+                    aria-controls="navbarHorarios" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarHorarios">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a href="/" class="nav-link" aria-current="page">Inicio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/panel_medico" class="nav-link active">Panel Médico</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/medico/ajustes" class="nav-link" aria-label="Ajustes">
+                                <i class="fa fa-cog" aria-hidden="true" style="font-size: 1.3em;"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" id="cerrarSesion" class="nav-link" aria-label="Cerrar sesión">Cerrar Sesión</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <main class="panel-section py-5" aria-labelledby="gestionarHorarios">
+            <div class="container">
+                <div class="bloque-horarios mx-auto my-4">
+                    <h2 id="gestionarHorarios">Gestionar Horarios</h2>
+                    <form action="/medico/horarios" method="POST" aria-labelledby="formHorarios">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-12 col-md-3">
+                                <label class="form-label" for="fecha">Fecha</label>
+                                <input type="date" id="fecha" name="fecha" class="form-control input-dark" required min="<%= new Date().toISOString().slice(0,10) %>">
+                            </div>
+                            <div class="col-12 col-md-2">
+                                <label class="form-label" for="hora_inicio">Hora inicio</label>
+                                <input type="time" id="hora_inicio" name="hora_inicio" class="form-control input-dark" required>
+                            </div>
+                            <div class="col-12 col-md-2">
+                                <label class="form-label" for="hora_fin">Hora fin</label>
+                                <input type="time" id="hora_fin" name="hora_fin" class="form-control input-dark" required>
+                            </div>
+                            <div class="col-12 col-md-3">
+                                <label class="form-label d-block mb-2">Disponibilidad</label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" id="disponible_si" name="disponible" value="true" checked>
+                                    <label class="form-check-label" for="disponible_si">Disponible</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" id="disponible_no" name="disponible" value="false">
+                                    <label class="form-check-label" for="disponible_no">No disponible</label>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-2 d-grid">
+                                <button type="submit" class="btn btn-agregar w-100" aria-label="Agregar horario">
+                                    <i class="fa fa-plus"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <table class="table-custom mt-4" role="table" aria-labelledby="tablaHorarios">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Hora inicio</th>
+                                <th>Hora fin</th>
+                                <th>Disponible</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (horarios.length > 0) { %>
+                                <% horarios.forEach((horario, idx) => { %>
+                                    <tr>
+                                        <td><%= horario.fecha %></td>
+                                        <td><%= horario.hora_inicio %></td>
+                                        <td><%= horario.hora_fin %></td>
+                                        <td><%= horario.disponible ? "Sí" : "No" %></td>
+                                        <td>
+                                            <form action="/medico/horarios/eliminar/<%= horario.id %>" method="POST" style="display:inline">
+                                                <button type="submit" class="btn btn-danger btn-sm mb-1">Eliminar</button>
+                                            </form>
+                                            <button type="button" class="btn btn-editar btn-sm"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modalEditar"
+                                                onclick="rellenarModalEditar(<%= horario.id %>, '<%= horario.fecha %>', '<%= horario.hora_inicio %>', '<%= horario.hora_fin %>', <%= horario.disponible %>)">
+                                                Editar
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">No tienes horarios registrados.</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+
+                    <% if (totalPaginas > 1) { %>
+                        <nav aria-label="Paginación de horarios">
+                            <ul class="pagination justify-content-center">
+                                <% for (let i = 1; i <= totalPaginas; i++) { %>
+                                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                        <a class="page-link" href="?page=<%= i %>" aria-label="Página <%= i %>">
+                                            <%= i %>
+                                        </a>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        </nav>
+                    <% } %>
+                </div>
+            </div>
+        </main>
+
+        <!-- Modal Bootstrap para editar horario -->
+        <div class="modal fade modal-vistoso" id="modalEditar" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-content-vistoso">
+                    <form id="formEditar" method="POST">
+                        <div class="modal-header border-0 pb-0">
+                            <h5 class="modal-title" id="modalEditarLabel">
+                                <i class="fa fa-pen-to-square me-2 text-primary"></i>Editar horario
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" name="id" id="edit_id">
+                            <div class="mb-3">
+                                <label class="form-label">Fecha:</label>
+                                <input type="date" name="fecha" id="edit_fecha" class="form-control input-dark" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Hora inicio:</label>
+                                <input type="time" name="hora_inicio" id="edit_hora_inicio" class="form-control input-dark" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Hora fin:</label>
+                                <input type="time" name="hora_fin" id="edit_hora_fin" class="form-control input-dark" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Disponible:</label>
+                                <select name="disponible" id="edit_disponible" class="form-select input-dark" required>
+                                    <option value="true">Sí</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0 pt-0">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-agregar">Guardar cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer mt-auto py-3" role="contentinfo" style="background: var(--azul-3); border-top: none;">
+        <p class="mb-0" style="color: var(--blanco); font-weight: bold; letter-spacing: 1px;">
+            &copy; 2025 FeelingFlow. Todos los derechos reservados.
+        </p>
+</footer>
+    <script>
+        document.getElementById("cerrarSesion").addEventListener("click", () => {
+            fetch("/logout", { method: "POST" }).then(() => window.location.href = "/");
+        });
+
+        function rellenarModalEditar(id, fecha, hora_inicio, hora_fin, disponible) {
+            document.getElementById('edit_id').value = id;
+            document.getElementById('edit_fecha').value = fecha;
+            document.getElementById('edit_hora_inicio').value = hora_inicio;
+            document.getElementById('edit_hora_fin').value = hora_fin;
+            document.getElementById('edit_disponible').value = disponible ? "true" : "false";
+            document.getElementById('formEditar').action = "/medico/horarios/editar/" + id;
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

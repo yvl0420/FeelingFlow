@@ -37,10 +37,14 @@ const Cita = db.define("citas", {
         },
         onDelete: "CASCADE",
     },
-    estado: {
-        type: DataTypes.ENUM("pendiente", "confirmada", "cancelada"),
-        defaultValue: "pendiente",
+    motivo: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
     },
+    estado: {
+    type: DataTypes.ENUM("pendiente", "confirmada", "cancelada", "finalizada"),
+    defaultValue: "pendiente",
+},
 }, {
     tableName: "citas",
     timestamps: false,

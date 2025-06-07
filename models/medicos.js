@@ -24,10 +24,6 @@ const Medico = db.define("medicos", {
     ubicacion: {
         type: DataTypes.STRING,
     },
-    calificacion: {
-        type: DataTypes.DECIMAL(3, 2),
-        defaultValue: 0,
-    },
 }, {
     tableName: "medicos",
     timestamps: false,

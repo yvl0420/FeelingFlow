@@ -5,16 +5,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const formularioInicioSesion = document.getElementById("formularioInicioSesion");
     const formularioRegistro = document.getElementById("formularioRegistro");
 
+    // Campos adicionales para médicos
+    const tipoUsuarioRegistro = document.getElementById("tipoUsuarioRegistro");
+    const especialidadGrupo = document.getElementById("especialidadGrupo");
+    const ubicacionGrupo = document.getElementById("ubicacionGrupo");
+    const especialidad = document.getElementById("especialidad");
+    const ubicacion = document.getElementById("ubicacion");
+
     // Función para cambiar entre formularios
     function cambiarFormulario(mostrar) {
-        // Mostrar el formulario de inicio de sesión y ocultar el de registro
         if (mostrar === "inicioSesion") {
             formularioInicioSesion.classList.add("activo");
             formularioRegistro.classList.remove("activo");
             botonInicioSesion.classList.add("activo");
             botonRegistro.classList.remove("activo");
         } else {
-            // Mostrar el formulario de registro y ocultar el de inicio de sesión
             formularioRegistro.classList.add("activo");
             formularioInicioSesion.classList.remove("activo");
             botonRegistro.classList.add("activo");
@@ -23,12 +28,55 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Event Listeners para cambiar de formulario
-    botonInicioSesion.addEventListener("click", () => cambiarFormulario("inicioSesion"));
-    botonRegistro.addEventListener("click", () => cambiarFormulario("registro"));
+    if (botonInicioSesion && botonRegistro) {
+        botonInicioSesion.addEventListener("click", () => cambiarFormulario("inicioSesion"));
+        botonRegistro.addEventListener("click", () => cambiarFormulario("registro"));
+    }
 
-    //MANEJAR REGISTRO DE USUARIO
+    // Mostrar/ocultar campos de especialidad y ubicación según tipo de usuario
+    if (tipoUsuarioRegistro) {
+        tipoUsuarioRegistro.addEventListener("change", function () {
+            const isMedico = this.value === "medico";
+            if (especialidadGrupo) especialidadGrupo.style.display = isMedico ? "block" : "none";
+            if (ubicacionGrupo) ubicacionGrupo.style.display = isMedico ? "block" : "none";
+        });
+    }
+
+    // --- AUTOCOMPLETADO DE UBICACIÓN ---
+    if (ubicacion) {
+        const listaSugerencias = document.getElementById("sugerencias-ubicacion");
+        ubicacion.addEventListener("input", function () {
+            const query = ubicacion.value;
+            if (query.length < 3) {
+                listaSugerencias.innerHTML = "";
+                return;
+            }
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=5&countrycodes=es`)
+                .then(res => res.json())
+                .then(data => {
+                    listaSugerencias.innerHTML = "";
+                    data.forEach(item => {
+                        const li = document.createElement("li");
+                        li.textContent = item.display_name;
+                        li.tabIndex = 0;
+                        li.addEventListener("mousedown", function () {
+                            ubicacion.value = item.display_name;
+                            listaSugerencias.innerHTML = "";
+                        });
+                        listaSugerencias.appendChild(li);
+                    });
+                });
+        });
+
+        ubicacion.addEventListener("blur", function () {
+            setTimeout(() => { listaSugerencias.innerHTML = ""; }, 100);
+        });
+    }
+    // --- FIN AUTOCOMPLETADO DE UBICACIÓN ---
+
+    // MANEJAR REGISTRO DE USUARIO
     formularioRegistro.addEventListener("submit", async (e) => {
-        e.preventDefault(); // Evita recargar la página
+        e.preventDefault();
 
         // Recoger los datos del formulario de registro
         const nombre = document.getElementById("nombre").value;
@@ -36,23 +84,26 @@ document.addEventListener("DOMContentLoaded", () => {
         const email = document.getElementById("email").value;
         const telefono = document.getElementById("telefono").value;
         const contrasena = document.getElementById("contrasenaRegistro").value;
-        const tipo_usuario = document.getElementById("tipoUsuarioRegistro").value;
+        const tipo_usuario = tipoUsuarioRegistro.value;
 
-        // Crear objeto con los datos
+        // Solo para médicos
         const datosUsuario = { nombre, apellido, email, telefono, contrasena, tipo_usuario };
+        if (tipo_usuario === "medico") {
+            datosUsuario.especialidad = especialidad.value;
+            datosUsuario.ubicacion = ubicacion.value;
+        }
 
         try {
-            // Enviar los datos al servidor
             const response = await fetch('/registro', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(datosUsuario)
             });
 
-            if (response.redirected) {
-                window.location.href = response.url;// Redirige al panel si el registro es exitoso
+            const data = await response.json();
+            if (data.redirect) {
+                window.location.href = data.redirect;
             } else {
-                const data = await response.json();
                 alert(data.error || 'Hubo un error al registrar el usuario');
             }
         } catch (error) {
@@ -61,28 +112,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    //MANEJAR INICIO DE SESIÓN
+    // MANEJAR INICIO DE SESIÓN
     formularioInicioSesion.addEventListener("submit", async (e) => {
-        e.preventDefault(); // Evita recargar la página
+        e.preventDefault();
 
-        // Recoger los datos del formulario de login
         const email = document.getElementById("correoInicio").value;
         const contrasena = document.getElementById("contrasenaInicio").value;
 
         const datos = { email, contrasena };
 
         try {
-            // Enviar datos al servidor
             const response = await fetch('/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(datos)
             });
 
-            if (response.redirected) {
-                window.location.href = response.url; // Redirige al panel si el login es exitoso
+            const data = await response.json();
+            if (data.redirect) {
+                window.location.href = data.redirect;
             } else {
-                const data = await response.json();
                 alert(data.error || 'Usuario o contraseña incorrectos');
             }
         } catch (error) {
