@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const especialidad = document.getElementById("especialidad");
     const ubicacion = document.getElementById("ubicacion");
 
-    // Función para cambiar entre formularios
+    // Función para cambiar entre formularios de inicio de sesión y registro
     function cambiarFormulario(mostrar) {
         if (mostrar === "inicioSesion") {
             formularioInicioSesion.classList.add("activo");

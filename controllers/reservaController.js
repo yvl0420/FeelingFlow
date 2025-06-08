@@ -1,16 +1,21 @@
+// Importación de modelos principales y nodemailer para notificaciones por correo
 import Cita from "../models/citas.js";
 import Horario from "../models/horarios.js";
 import Medico from "../models/medicos.js";
 import Usuario from "../models/usuarios.js";
 import nodemailer from "nodemailer";
 
-// Procesar la reserva de cita desde el calendario
+/**
+ * Controlador para procesar la reserva de una cita desde el calendario.
+ * Valida los datos, crea la cita, marca el horario como no disponible y envía correo de confirmación.
+ */
 export const reservarCita = async (req, res) => {
     const { id } = req.params; // Id del médico
     const { horario_id, motivo } = req.body; // Id del horario seleccionado y motivo
 
     console.log("Datos recibidos en el servidor:", req.body);
 
+    // Validación de datos
     if (!horario_id || !motivo || motivo.trim() === "") {
         console.error("Faltan datos necesarios para la reserva");
         return res.status(400).send("Faltan datos necesarios para la reserva");
@@ -62,7 +67,7 @@ export const reservarCita = async (req, res) => {
             return res.status(400).send("Médico no encontrado");
         }
 
-        // Configurar Nodemailer
+        // Configurar Nodemailer para enviar correo de confirmación
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -71,7 +76,7 @@ export const reservarCita = async (req, res) => {
             }
         });
 
-        // Correo con algo de CSS para mejor visualización
+        // Correo de confirmación con detalles de la cita
         const mailOptions = {
             from: 'prueba.yv1@gmail.com',
             to: usuario.email,
@@ -96,7 +101,7 @@ export const reservarCita = async (req, res) => {
             `
         };
 
-        //Enviar el correo electrónico
+        // Enviar el correo electrónico de confirmación
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.error("Error al enviar el correo electrónico:", error);
@@ -112,12 +117,15 @@ export const reservarCita = async (req, res) => {
     }
 };
 
-//Procesar la cancelación de cita
+/**
+ * Controlador para cancelar una cita por parte del paciente.
+ * Libera el horario y envía correo de confirmación de cancelación.
+ */
 export const cancelarCita = async (req, res) => {
     try {
-        const { id } = req.params; //Id de la cita a cancelar
+        const { id } = req.params; // Id de la cita a cancelar
 
-        // Buscar la cita
+        // Buscar la cita y sus relaciones
         const cita = await Cita.findByPk(id, {
             include: [
                 {
@@ -144,7 +152,7 @@ export const cancelarCita = async (req, res) => {
             ]
         });
 
-        //Verificar si la cita existe
+        // Verificar si la cita existe
         if (!cita) {
             return res.status(404).json({ success: false, message: "Cita no encontrada" });
         }
@@ -152,7 +160,7 @@ export const cancelarCita = async (req, res) => {
         // Obtener el ID del horario de la cita
         const horarioId = cita.Horario.id;
 
-        //Actualizar el horario a disponible
+        // Actualizar el horario a disponible
         await Horario.update({ disponible: true }, {
             where: { id: horarioId }
         });
@@ -160,7 +168,7 @@ export const cancelarCita = async (req, res) => {
         // Eliminar la cita
         await cita.destroy();
 
-        // Configurar Nodemailer
+        // Configurar Nodemailer para notificar la cancelación
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -169,7 +177,7 @@ export const cancelarCita = async (req, res) => {
             }
         });
 
-        // Correo con algo de CSS para mejor visualización
+        // Correo de cancelación con detalles de la cita
         const mailOptions = {
             from: 'prueba.yv1@gmail.com',
             to: cita.Paciente.email,
@@ -194,7 +202,7 @@ export const cancelarCita = async (req, res) => {
             `
         };
 
-        //Enviar el correo electrónico
+        // Enviar el correo electrónico de cancelación
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.error("Error al enviar el correo electrónico:", error);
@@ -210,13 +218,16 @@ export const cancelarCita = async (req, res) => {
     }
 };
 
-//Función para reprogramar una cita
+/**
+ * Controlador para reprogramar una cita por parte del paciente.
+ * Cambia el horario de la cita, actualiza la disponibilidad y notifica por correo.
+ */
 export const reprogramarCita = async (req, res) => {
     try {
         const { id } = req.params;  // ID de la cita a reprogramar
         const { nuevoHorarioId } = req.body;  // ID del nuevo horario seleccionado
 
-        // Buscar la cita actual
+        // Buscar la cita actual y sus relaciones
         const cita = await Cita.findByPk(id, {
             include: [
                 {
@@ -243,14 +254,12 @@ export const reprogramarCita = async (req, res) => {
             return res.status(404).json({ success: false, message: "Cita no encontrada" });
         }
 
-        // Verificar si el nuevo horario es válido
+        // Verificar si el nuevo horario es válido y está disponible
         const nuevoHorario = await Horario.findByPk(nuevoHorarioId);
         if (!nuevoHorario) {
             console.error("Nuevo horario no encontrado");
             return res.status(404).json({ success: false, message: "Nuevo horario no encontrado" });
         }
-
-        // Verificar que el nuevo horario esté disponible
         if (!nuevoHorario.disponible) {
             console.error("El nuevo horario no está disponible");
             return res.status(400).json({ success: false, message: "El nuevo horario no está disponible" });
@@ -269,7 +278,7 @@ export const reprogramarCita = async (req, res) => {
         // Marcar el nuevo horario como no disponible
         await Horario.update({ disponible: false }, { where: { id: nuevoHorario.id } });
 
-        // Enviar correo de confirmación de reprogramación
+        // Configurar Nodemailer para notificar la reprogramación
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -278,7 +287,7 @@ export const reprogramarCita = async (req, res) => {
             }
         });
 
-        // Correo con algo de CSS para mejor visualización
+        // Correo de confirmación de reprogramación
         const mailOptions = {
             from: 'prueba.yv1@gmail.com',
             to: cita.Paciente.email,
@@ -303,6 +312,7 @@ export const reprogramarCita = async (req, res) => {
             `
         };
 
+        // Enviar el correo electrónico de reprogramación
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.error("Error al enviar el correo electrónico:", error);

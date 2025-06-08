@@ -1,8 +1,15 @@
+// Importación del modelo Usuario para gestionar los datos generales del usuario
 import Usuario from "../models/usuarios.js";
+// Importación de bcrypt para el cifrado seguro de contraseñas
 import bcrypt from "bcrypt";
+// Importación de nodemailer para el envío de correos electrónicos automáticos
 import nodemailer from "nodemailer";
 
-// Mostrar ajustes de usuario
+/**
+ * Controlador para mostrar la página de ajustes del usuario.
+ * Si el usuario no está autenticado, redirige al login.
+ * Si está autenticado, renderiza la vista 'ajustes_usuario' con los datos actuales.
+ */
 export const mostrarAjustesUsuario = (req, res) => {
   if (!req.session.usuario) {
     return res.redirect("/login");
@@ -10,32 +17,39 @@ export const mostrarAjustesUsuario = (req, res) => {
   res.render("ajustes_usuario", { usuario: req.session.usuario });
 };
 
-// Actualizar ajustes de usuario
+/**
+ * Controlador para actualizar los ajustes del usuario.
+ * Permite modificar datos personales y cambiar la contraseña.
+ * Si se cambia la contraseña, se cifra y se envía un correo de confirmación.
+ */
 export const actualizarAjustesUsuario = async (req, res) => {
   try {
+    // Obtener el ID del usuario desde la sesión
     const usuarioId = req.session.usuario.id;
+    // Extraer los datos enviados desde el formulario
     const { nombre, apellido, email, telefono, nuevaContrasena } = req.body;
 
-    // Actualizar datos básicos
+    // Actualizar los datos básicos del usuario
     await Usuario.update(
       { nombre, apellido, email, telefono },
       { where: { id: usuarioId } }
     );
 
-    // Cambiar contraseña si se ha introducido una nueva
+    // Cambiar contraseña si se ha introducido una nueva válida
     if (nuevaContrasena && nuevaContrasena.length >= 8) {
       const hash = await bcrypt.hash(nuevaContrasena, 10);
       await Usuario.update({ password: hash }, { where: { id: usuarioId } });
 
-      // Enviar correo de confirmación
+      // Configuración del transporte de correo usando nodemailer (Gmail)
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
           user: "prueba.yv1@gmail.com",
-          pass: "gmmu pmxh stpz fmsi",
+          pass: "gmmu pmxh stpz fmsi", // Contraseña de aplicación de Gmail
         },
       });
 
+      // Opciones del correo de confirmación de cambio de contraseña
       const mailOptions = {
         from: "prueba.yv1@gmail.com",
         to: email,
@@ -60,13 +74,15 @@ export const actualizarAjustesUsuario = async (req, res) => {
     `,
       };
 
+      // Enviar el correo de confirmación
       await transporter.sendMail(mailOptions);
     }
 
-    // Actualiza la sesión con los nuevos datos
+    // Actualiza la sesión con los nuevos datos del usuario
     const usuarioActualizado = await Usuario.findByPk(usuarioId);
     req.session.usuario = usuarioActualizado;
 
+    // Redirigir de nuevo a la página de ajustes tras la actualización
     res.redirect("/usuario/ajustes");
   } catch (error) {
     res.status(500).send("Error al actualizar los ajustes");

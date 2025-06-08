@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/css/medicos.css">
 </head>
 <body>
+    <!-- Barra de navegación superior -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white" role="navigation" aria-label="Navegación principal">
         <div class="container">
             <a class="navbar-brand" href="/" aria-label="Ir a la página de inicio">FeelingFlow</a>
@@ -26,6 +27,7 @@
         </div>
     </nav>
 
+    <!-- Filtros de búsqueda de médicos -->
     <div class="container py-4">
         <h2 class="text-center mb-4">Buscar Médicos</h2>
         <form action="/medicos" method="GET" aria-labelledby="buscarMedicosForm" class="row g-3 justify-content-center align-items-end filtros-medicos mb-4">
@@ -62,6 +64,7 @@
             </div>
         </form>
 
+        <!-- Tabla de resultados de médicos -->
         <div class="table-responsive">
             <table class="table-custom w-100" role="table" aria-labelledby="tablaMedicos">
                 <thead>
@@ -96,6 +99,7 @@
             </table>
         </div>
 
+        <!-- Paginación si hay varias páginas -->
         <% if (totalPaginas > 1) { %>
             <nav aria-label="Paginación de médicos">
                 <ul class="pagination justify-content-center">
@@ -111,6 +115,7 @@
         <% } %>
     </div>
 
+    <!-- Pie de página -->
     <footer class="footer" role="contentinfo">
         <div class="container">
             <p>&copy; 2025 FeelingFlow. Todos los derechos reservados.</p>

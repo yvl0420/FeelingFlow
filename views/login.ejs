@@ -17,6 +17,7 @@
         <p>Bienestar Médico y Emocional</p>
       </div>
 
+      <!-- Botones para cambiar entre formularios -->
       <div class="cambio-formulario d-flex mb-3" role="tablist">
         <button id="mostrarInicioSesion" class="activo flex-fill" role="tab" tabindex="0">
           Iniciar Sesión
@@ -81,6 +82,7 @@
             <span class="mensaje-error" aria-live="assertive"></span>
           </div>
         </div>
+        <!-- Campos adicionales para médicos -->
         <div class="grupo-entrada mb-3" id="especialidadGrupo" style="display: none">
           <label for="especialidad">Especialidad</label>
           <select id="especialidad" name="especialidad" required class="form-select">
@@ -133,8 +135,10 @@
       <a href="/" class="volver-inicio mt-3">Volver al Inicio</a>
     </div>
   </div>
+  <!-- Script de interacción de formularios y autocompletado -->
   <script src="/js/login.js"></script>
   <script>
+    // Mostrar/ocultar contraseña
     function togglePassword(inputId, btn) {
       const input = document.getElementById(inputId);
       const icon = btn.querySelector('i');

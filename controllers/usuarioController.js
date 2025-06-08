@@ -2,7 +2,10 @@ import Usuario from '../models/usuarios.js';
 import Medico from '../models/medicos.js';
 import bcrypt from 'bcryptjs';
 
-// Autenticación del usuario
+/**
+ * Middleware para verificar si el usuario está autenticado.
+ * Si no hay sesión, redirige a login. Si hay, añade el usuario a req.user.
+ */
 const autenticarUsuario = (req, res, next) => {
     if (!req.session.usuario) {
         return res.redirect("/login");
@@ -11,19 +14,24 @@ const autenticarUsuario = (req, res, next) => {
     next();
 };
 
-// Registrar usuario o médico
+/**
+ * Controlador para registrar un nuevo usuario o médico.
+ * Si el tipo es médico, crea también el registro en la tabla médicos.
+ */
 const registrarUsuario = async (req, res) => {
     const { nombre, apellido, email, telefono, contrasena, tipo_usuario, especialidad, ubicacion } = req.body;
 
     try {
+        // Comprobar si el correo ya está registrado
         const usuarioExistente = await Usuario.findOne({ where: { email } });
         if (usuarioExistente) {
             return res.status(400).json({ error: 'El correo electrónico ya está registrado' });
         }
 
+        // Cifrar la contraseña antes de guardar
         const contrasenaCifrada = await bcrypt.hash(contrasena, 10);
 
-        // Crear usuario
+        // Crear usuario en la base de datos
         const nuevoUsuario = await Usuario.create({
             nombre,
             apellido,
@@ -53,16 +61,21 @@ const registrarUsuario = async (req, res) => {
     }
 };
 
-// Iniciar sesión y redirigir según tipo
+/**
+ * Controlador para iniciar sesión.
+ * Verifica credenciales y redirige según el tipo de usuario.
+ */
 const loginUsuario = async (req, res) => {
     const { email, contrasena } = req.body;
 
     try {
+        // Buscar usuario por email
         const usuario = await Usuario.findOne({ where: { email } });
         if (!usuario) {
             return res.status(400).json({ error: 'Usuario o contraseña incorrectos' });
         }
 
+        // Comparar contraseña cifrada
         const esValido = await bcrypt.compare(contrasena, usuario.password);
         if (!esValido) {
             return res.status(400).json({ error: 'Usuario o contraseña incorrectos' });
@@ -83,4 +96,5 @@ const loginUsuario = async (req, res) => {
     }
 };
 
+// Exportar los controladores para uso en rutas
 export { autenticarUsuario, registrarUsuario, loginUsuario };

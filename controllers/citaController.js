@@ -1,28 +1,37 @@
+// Importación de operadores de Sequelize para búsquedas avanzadas
 import { Op } from "sequelize";
+// Importación de nodemailer para el envío de correos electrónicos automáticos
 import nodemailer from "nodemailer";
+// Importación de los modelos principales del sistema
 import Medico from "../models/medicos.js";
 import Horario from "../models/horarios.js";
 import Cita from "../models/citas.js";
 import Usuario from "../models/usuarios.js";
+// Importación de PDFKit para la generación de documentos PDF
 import PDFDocument from "pdfkit";
 
-// Ver citas del médico
+/**
+ * Controlador para mostrar las citas del médico.
+ * Permite filtrar por estado y nombre del paciente, y paginar los resultados.
+ */
 export const verCitasMedico = async (req, res) => {
   try {
     const usuario = req.session.usuario;
+    // Buscar el médico asociado al usuario logueado
     const medico = await Medico.findOne({ where: { usuario_id: usuario.id } });
     if (!medico) return res.redirect("/panel_medico");
 
+    // Filtros de búsqueda
     const estadoFiltro = req.query.estado || "";
     const nombre = req.query.nombre ? req.query.nombre.trim() : "";
     const whereEstado = { medico_id: medico.id };
 
-    // Solo filtra por estado si el usuario selecciona un estado específico
+    // Filtrado por estado si se selecciona uno específico
     if (estadoFiltro && estadoFiltro !== "todas") {
       whereEstado.estado = estadoFiltro;
     }
     
-    // Si no hay filtro, muestra todas las citas del médico
+    // Filtrado por nombre de paciente si se introduce
     let whereUsuario = undefined;
     if (nombre) {
       whereUsuario = {
@@ -33,10 +42,12 @@ export const verCitasMedico = async (req, res) => {
       };
     }
 
+    // Paginación
     const page = parseInt(req.query.page) || 1;
     const limit = 5;
     const offset = (page - 1) * limit;
 
+    // Consulta de citas con filtros y paginación
     const { count, rows: citas } = await Cita.findAndCountAll({
       where: whereEstado,
       include: [
@@ -58,6 +69,7 @@ export const verCitasMedico = async (req, res) => {
 
     const totalPaginas = Math.ceil(count / limit);
 
+    // Renderiza la vista de citas del médico
     res.render("citas_medico", {
       usuario,
       citas,
@@ -67,6 +79,7 @@ export const verCitasMedico = async (req, res) => {
       nombre,
     });
   } catch (error) {
+    // En caso de error, muestra la vista vacía
     console.error(error);
     res.render("citas_medico", {
       usuario: req.session.usuario,
@@ -79,13 +92,18 @@ export const verCitasMedico = async (req, res) => {
   }
 };
 
-// Confirmar cita
+/**
+ * Controlador para confirmar una cita por parte del médico.
+ * Cambia el estado de la cita y envía un correo de confirmación al paciente.
+ */
 export const confirmarCitaMedico = async (req, res) => {
   try {
     const usuario = req.session.usuario;
+    // Buscar el médico asociado al usuario logueado
     const medico = await Medico.findOne({ where: { usuario_id: usuario.id } });
     if (!medico) return res.status(403).send("No autorizado");
 
+    // Buscar la cita por ID y comprobar que pertenece al médico
     const cita = await Cita.findByPk(req.params.id, {
       include: [
         { model: Usuario, as: "usuario" },
@@ -94,9 +112,10 @@ export const confirmarCitaMedico = async (req, res) => {
     });
     if (!cita || cita.medico_id !== medico.id) return res.status(404).send("Cita no encontrada");
 
+    // Actualizar estado de la cita
     await cita.update({ estado: "confirmada" });
 
-    // Enviar correo al paciente
+    // Enviar correo al paciente notificando la confirmación
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: { user: "prueba.yv1@gmail.com", pass: "gmmu pmxh stpz fmsi" },
@@ -138,7 +157,10 @@ export const confirmarCitaMedico = async (req, res) => {
   }
 };
 
-// Cancelar cita
+/**
+ * Controlador para cancelar una cita por parte del médico.
+ * Cambia el estado de la cita, libera el horario y notifica al paciente por correo.
+ */
 export const cancelarCitaMedico = async (req, res) => {
   try {
     const usuario = req.session.usuario;
@@ -153,13 +175,14 @@ export const cancelarCitaMedico = async (req, res) => {
     });
     if (!cita || cita.medico_id !== medico.id) return res.status(404).send("Cita no encontrada");
 
+    // Cambiar estado y liberar horario
     await cita.update({ estado: "cancelada" });
     await Horario.update(
       { disponible: true },
       { where: { id: cita.horario_id } }
     );
 
-    // Enviar correo al paciente
+    // Enviar correo al paciente notificando la cancelación
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: { user: "prueba.yv1@gmail.com", pass: "gmmu pmxh stpz fmsi" },
@@ -201,7 +224,10 @@ export const cancelarCitaMedico = async (req, res) => {
   }
 };
 
-// Obtener horarios disponibles para reprogramar (para médico y paciente)
+/**
+ * Controlador para obtener los horarios disponibles para reprogramar una cita.
+ * Devuelve los horarios libres del médico asociado a la cita.
+ */
 export const obtenerHorariosDisponibles = async (req, res) => {
   try {
     const { citaId } = req.params;
@@ -211,6 +237,7 @@ export const obtenerHorariosDisponibles = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Cita no encontrada" });
 
+    // Buscar horarios disponibles del médico
     const horariosDisponibles = await Horario.findAll({
       where: {
         medico_id: cita.medico_id,
@@ -234,7 +261,10 @@ export const obtenerHorariosDisponibles = async (req, res) => {
   }
 };
 
-// Reprogramar cita
+/**
+ * Controlador para reprogramar una cita por parte del médico.
+ * Cambia el horario de la cita, actualiza la disponibilidad y notifica al paciente.
+ */
 export const reprogramarCitaMedico = async (req, res) => {
   try {
     const usuario = req.session.usuario;
@@ -266,7 +296,7 @@ export const reprogramarCitaMedico = async (req, res) => {
       { where: { id: nuevoHorarioId } }
     );
 
-    // Enviar correo al paciente
+    // Enviar correo al paciente notificando la reprogramación
     const nuevoHorario = await Horario.findByPk(nuevoHorarioId);
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -309,7 +339,10 @@ export const reprogramarCitaMedico = async (req, res) => {
   }
 };
 
-// Obtener citas del paciente (para mis-citas)
+/**
+ * Controlador para obtener las citas del paciente (vista "mis citas").
+ * Permite paginar los resultados.
+ */
 export const obtenerCitasUsuario = async (req, res) => {
   try {
     const usuarioId = req.session.usuario.id;
@@ -337,6 +370,7 @@ export const obtenerCitasUsuario = async (req, res) => {
 
     const totalPaginas = Math.ceil(count / limit);
 
+    // Renderiza la vista de citas del usuario
     res.render("misCitas", {
       citas,
       totalPaginas,
@@ -348,7 +382,10 @@ export const obtenerCitasUsuario = async (req, res) => {
   }
 };
 
-// (Opcional) Rechazar cita (si tienes esta ruta)
+/**
+ * Controlador para rechazar una cita por parte del médico.
+ * Cambia el estado de la cita, libera el horario y notifica al paciente.
+ */
 export const rechazarCitaMedico = async (req, res) => {
   try {
     const cita = await Cita.findByPk(req.params.id, {
@@ -365,7 +402,7 @@ export const rechazarCitaMedico = async (req, res) => {
       { where: { id: cita.horario_id } }
     );
 
-    // Enviar correo al paciente
+    // Enviar correo al paciente notificando el rechazo
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: { user: "prueba.yv1@gmail.com", pass: "gmmu pmxh stpz fmsi" },
@@ -407,6 +444,10 @@ export const rechazarCitaMedico = async (req, res) => {
   }
 };
 
+/**
+ * Controlador para descargar las citas del médico en PDF.
+ * Utiliza PDFKit para generar un documento con las citas filtradas.
+ */
 export const descargarCitasPDF = async (req, res) => {
   try {
     const usuario = req.session.usuario;
@@ -437,7 +478,7 @@ export const descargarCitasPDF = async (req, res) => {
       ],
     });
 
-    // PDFKit
+    // PDFKit: generación del PDF con las citas
     const doc = new PDFDocument({ size: "A4", margin: 40 });
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
@@ -446,7 +487,7 @@ export const descargarCitasPDF = async (req, res) => {
     );
     doc.pipe(res);
 
-    // Título
+    // Título y subtítulo
     doc
       .fontSize(20)
       .fillColor("#0d6efd")
@@ -454,7 +495,6 @@ export const descargarCitasPDF = async (req, res) => {
       .text("Citas de mis pacientes", { align: "center" })
       .moveDown(0.5);
 
-    // Subtítulo filtro
     doc
       .fontSize(12)
       .fillColor("#333")
@@ -467,19 +507,19 @@ export const descargarCitasPDF = async (req, res) => {
       )
       .moveDown(1);
 
-    // Tabla
+    // Tabla de citas
     const tableTop = doc.y;
-    const itemHeight = 22; // un poco más bajo
+    const itemHeight = 22;
     const columns = [
       { label: "Nº", width: 30 },
       { label: "Paciente", width: 120 },
       { label: "Fecha", width: 75 },
-      { label: "Hora", width: 110 }, // más ancho
+      { label: "Hora", width: 110 },
       { label: "Estado", width: 70 },
       { label: "Motivo", width: 140 },
     ];
 
-    // Encabezado
+    // Encabezado de la tabla
     let x = doc.options.margin;
     doc
       .rect(
@@ -501,13 +541,13 @@ export const descargarCitasPDF = async (req, res) => {
       x += col.width;
     });
 
-    // Filas
+    // Filas de la tabla
     let y = tableTop + itemHeight;
     citas.forEach((cita, i) => {
       x = doc.options.margin;
       const fillColor = i % 2 === 0 ? "#f8f9fa" : "#e9ecef";
 
-      // Prepara los textos
+      // Prepara los textos de cada celda
       const paciente = cita.usuario
         ? `${cita.usuario.nombre} ${cita.usuario.apellido}`
         : "";
@@ -570,6 +610,7 @@ export const descargarCitasPDF = async (req, res) => {
       }
     });
 
+    // Mensaje si no hay citas
     if (citas.length === 0) {
       doc
         .fillColor("#212529")
@@ -589,11 +630,15 @@ export const descargarCitasPDF = async (req, res) => {
   }
 };
 
+/**
+ * Controlador para descargar las citas del usuario en PDF.
+ * Utiliza PDFKit para generar un documento con las citas filtradas.
+ */
 export const descargarCitasUsuarioPDF = async (req, res) => {
   try {
     const usuarioId = req.session.usuario.id;
 
-    // Filtro por estado (opcional, si quieres filtrar)
+    // Filtro por estado (opcional)
     const estadoFiltro = req.query.estado || "todas";
     const whereEstado = { paciente_id: usuarioId };
     if (estadoFiltro && estadoFiltro !== "todas") {
@@ -617,13 +662,13 @@ export const descargarCitasUsuarioPDF = async (req, res) => {
       ],
     });
 
-    // PDFKit
+    // PDFKit: generación del PDF con las citas
     const doc = new PDFDocument({ size: "A4", margin: 40 });
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", "attachment; filename=mis_citas.pdf");
     doc.pipe(res);
 
-    // Título
+    // Título y subtítulo
     doc
       .fontSize(20)
       .fillColor("#0d6efd")
@@ -631,7 +676,6 @@ export const descargarCitasUsuarioPDF = async (req, res) => {
       .text("Mis Citas", { align: "center" })
       .moveDown(0.5);
 
-    // Subtítulo filtro
     doc
       .fontSize(12)
       .fillColor("#333")
@@ -642,7 +686,7 @@ export const descargarCitasUsuarioPDF = async (req, res) => {
       )
       .moveDown(1);
 
-    // Tabla ajustada para A4
+    // Tabla de citas
     const tableTop = doc.y;
     const itemHeight = 22;
     const columns = [
@@ -655,7 +699,7 @@ export const descargarCitasUsuarioPDF = async (req, res) => {
       { label: "Motivo", width: 110 }
     ];
 
-    // Encabezado
+    // Encabezado de la tabla
     let x = doc.options.margin;
     doc
       .rect(
@@ -677,13 +721,13 @@ export const descargarCitasUsuarioPDF = async (req, res) => {
       x += col.width;
     });
 
-    // Filas
+    // Filas de la tabla
     let y = tableTop + itemHeight;
     citas.forEach((cita, i) => {
       x = doc.options.margin;
       const fillColor = i % 2 === 0 ? "#f8f9fa" : "#e9ecef";
 
-      // Prepara los textos
+      // Prepara los textos de cada celda
       const medico =
         cita.Medico && cita.Medico.Usuario
           ? `${cita.Medico.Usuario.nombre} ${cita.Medico.Usuario.apellido}`
@@ -749,6 +793,7 @@ export const descargarCitasUsuarioPDF = async (req, res) => {
       }
     });
 
+    // Mensaje si no hay citas
     if (citas.length === 0) {
       doc
         .fillColor("#212529")
